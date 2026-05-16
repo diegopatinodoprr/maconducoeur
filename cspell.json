@@ -1,0 +1,24 @@
+{
+  "version": "0.2",
+  "language": "en,fr",
+  "words": [
+    "doprrweb",
+    "maconducoeur",
+    "mongodb"
+  ],
+  "ignorePaths": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/coverage/**",
+    "**/.angular/**",
+    "**/package-lock.json",
+    "**/*.min.js",
+    "**/*.min.css",
+    "**/*.png",
+    "**/*.jpg",
+    "**/*.jpeg",
+    "**/*.webp",
+    "**/*.ico",
+    "**/*.zip"
+  ]
+}

@@ -126,6 +126,7 @@ export class AccountPage implements OnInit {
   fullImageUrl(url: string | null): string | null {
     if (!url) return null;
     if (url.startsWith('http://') || url.startsWith('https://')) return url;
-    return environment.production ? url : `http://localhost:6565${url}`;
+    const apiBase = environment.apiUrl.replace(/\/api$/, '');
+    return `${apiBase}${url}`;
   }
 }

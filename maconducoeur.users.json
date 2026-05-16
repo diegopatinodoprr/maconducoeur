@@ -1,0 +1,26 @@
+[{
+  "_id": {
+    "$oid": "6a081e82f65b397f5b29a9b6"
+  },
+  "email": "admin@maconducoeur.local",
+  "created_at": {
+    "$date": "2026-05-16T09:08:04.712Z"
+  },
+  "first_name": "Admin",
+  "last_name": "Principal",
+  "password_hash": "$2b$10$SgS8NaYh.l7GBpOl3WiqM.fb.MOMHQdHgMyGXRhtoU90JMDvfSflG",
+  "role": "admin"
+},
+{
+  "_id": {
+    "$oid": "6a081e82f65b397f5b29a9b7"
+  },
+  "email": "user@maconducoeur.local",
+  "created_at": {
+    "$date": "2026-05-16T09:08:04.719Z"
+  },
+  "first_name": "Jean",
+  "last_name": "Utilisateur",
+  "password_hash": "$2b$10$A2dYc5SD3znvAPflUKtlxuA87.pePU0Di0YsJcdhYPLuOdGzOIu/e",
+  "role": "user"
+}]

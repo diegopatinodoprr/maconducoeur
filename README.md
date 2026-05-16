@@ -41,6 +41,7 @@ API:
 - `DELETE http://localhost:3000/api/utils/manufacturers/:id` (admin)
 - `POST http://localhost:3000/api/files` (auth, form-data field: `file`)
 - `GET http://localhost:3000/api/files` (auth)
+- `POST http://localhost:3000/api/admin/seedprod` (admin)
 - `POST http://localhost:3000/api/borrowings` (auth)
 - `GET http://localhost:3000/api/borrowings` (auth)
 - `PUT http://localhost:3000/api/borrowings/:id/status` (owner only)
@@ -93,7 +94,8 @@ Web:
 
 - Les images upload sont servies via `GET /uploads/<filename>`.
 - Formats acceptes: `jpeg`, `png`, `webp`.
-- Taille max par fichier: `5MB`.
+- Taille max a l'entree: `30MB` (puis optimisation serveur).
+- Le backend optimise automatiquement les images (redimensionnement + conversion WebP).
 
 ## Notes API borrowings
 

@@ -74,7 +74,8 @@ export class UserPage implements OnInit {
   fullImageUrl(path: string | null): string | null {
     if (!path) return null;
     if (path.startsWith('http://') || path.startsWith('https://')) return path;
-    return environment.production ? path : `http://localhost:6565${path}`;
+    const apiBase = environment.apiUrl.replace(/\/api$/, '');
+    return `${apiBase}${path}`;
   }
 
   displayUser(user: ToolItem['owner_user']): string {

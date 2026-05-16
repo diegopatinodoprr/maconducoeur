@@ -15,35 +15,68 @@ type DbUser = {
   role: UserRole;
 };
 
+function authLog(message: string): void {
+  if (env.authVerboseLogs) {
+    console.log(message);
+  }
+}
+
+function authWarn(message: string): void {
+  if (env.authVerboseLogs) {
+    console.warn(message);
+  }
+}
+
 export async function login(req: Request, res: Response): Promise<void> {
   const { email, password } = req.body as { email?: string; password?: string };
+  authLog(`[AUTH][LOGIN] Request received for email="${email ?? '-'}"`);
 
   if (!email || !password) {
+    authWarn('[AUTH][LOGIN] Missing email or password');
     res.status(400).json({ message: 'Email et mot de passe requis' });
     return;
   }
 
   try {
+    authLog('[AUTH][LOGIN] Loading users list for diagnostics');
     const db = await getDb();
+    if (env.authVerboseLogs) {
+      const availableUsers = await db
+        .collection<DbUser>('users')
+        .find({}, { projection: { email: 1, role: 1 } })
+        .toArray();
+      authLog(
+        `[AUTH][LOGIN] Available users (${availableUsers.length}): ${availableUsers
+          .map((u) => `${u.email}(${u.role})`)
+          .join(', ')}`
+      );
+    }
+
+    authLog(`[AUTH][LOGIN] Looking up user by email="${email}"`);
     const user = await db.collection<DbUser>('users').findOne({ email });
 
     if (!user) {
+      authWarn(`[AUTH][LOGIN] User not found for email="${email}"`);
       res.status(401).json({ message: 'Identifiants invalides' });
       return;
     }
 
+    authLog(`[AUTH][LOGIN] User found id=${user._id.toHexString()} role=${user.role}, checking password`);
     const isValid = await bcrypt.compare(password, user.password_hash);
     if (!isValid) {
+      authWarn(`[AUTH][LOGIN] Invalid password for email="${email}"`);
       res.status(401).json({ message: 'Identifiants invalides' });
       return;
     }
 
+    authLog(`[AUTH][LOGIN] Password valid for email="${email}", generating JWT`);
     const token = jwt.sign(
       { sub: user._id.toHexString(), email: user.email, role: user.role },
       env.jwtSecret,
       { expiresIn: '8h' }
     );
 
+    authLog(`[AUTH][LOGIN] Login successful for email="${email}"`);
     res.json({
       token,
       user: {
@@ -53,6 +86,7 @@ export async function login(req: Request, res: Response): Promise<void> {
       }
     });
   } catch (error) {
+    console.error('[AUTH][LOGIN] Unexpected error:', (error as Error).message);
     res.status(500).json({ message: 'Erreur serveur', error: (error as Error).message });
   }
 }

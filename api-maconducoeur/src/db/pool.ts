@@ -7,9 +7,11 @@ let db: Db | null = null;
 export async function getDb(): Promise<Db> {
   if (db) return db;
 
+  console.log(`[DB] Connecting to MongoDB "${env.mongo.dbName}"...`);
   client = new MongoClient(env.mongo.uri);
   await client.connect();
   db = client.db(env.mongo.dbName);
+  console.log('[DB] MongoDB connection established');
   return db;
 }
 

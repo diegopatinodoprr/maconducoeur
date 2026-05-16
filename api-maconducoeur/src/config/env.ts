@@ -12,6 +12,7 @@ for (const key of required) {
 export const env = {
   port: Number(process.env.PORT ?? 3000),
   jwtSecret: process.env.JWT_SECRET as string,
+  authVerboseLogs: process.env.AUTH_VERBOSE_LOGS === 'true',
   mongo: {
     uri: process.env.MONGODB_URI as string,
     dbName: process.env.MONGODB_DB_NAME as string
