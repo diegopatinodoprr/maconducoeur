@@ -1,0 +1,33 @@
+# OS / Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Env files
+.env
+.env.*
+!.env.example
+
+# Node / build artifacts
+**/node_modules/
+**/dist/
+**/coverage/
+**/.angular/cache/
+**/.cache/
+
+# Uploads and generated runtime files
+api-maconducoeur/uploads/
+api-maconducoeur/tmp/
+
+# Misc
+*.swp
+*.swo
+api-maconducoeur/.env

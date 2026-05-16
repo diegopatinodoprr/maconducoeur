@@ -1,0 +1,41 @@
+<section class="panel">
+  <h2><span class="material-symbols-outlined">account_circle</span>Gestion du Compte</h2>
+  <p>Parametres du profil et avatar.</p>
+
+  @if (profile(); as p) {
+    <div class="profile-card">
+      @if (fullImageUrl(p.avatar_url); as avatar) {
+        <img [src]="avatar" alt="Avatar utilisateur" class="avatar" />
+      } @else {
+        <div class="avatar fallback">
+          <span class="material-symbols-outlined">person</span>
+        </div>
+      }
+
+      <div class="infos">
+        <h3>{{ p.first_name }} {{ p.last_name }}</h3>
+        <p>{{ p.email }}</p>
+        <span class="role">{{ p.role }}</span>
+      </div>
+    </div>
+
+    <label class="upload-btn">
+      <span class="material-symbols-outlined">upload</span>
+      Changer mon avatar
+      <input type="file" accept="image/png,image/jpeg,image/webp" (change)="onAvatarSelected($event)" />
+    </label>
+
+    <form class="form" (ngSubmit)="saveProfile()">
+      <h3>Mettre a jour mon profil</h3>
+      <input name="first_name" [(ngModel)]="profileFirstName" placeholder="Prenom" required />
+      <input name="last_name" [(ngModel)]="profileLastName" placeholder="Nom" required />
+      <input name="email" [(ngModel)]="profileEmail" placeholder="Email" type="email" required />
+      <input name="phone" [(ngModel)]="profilePhone" placeholder="Numero de telephone" />
+      <button type="submit">Enregistrer</button>
+    </form>
+
+    @if (loading()) {
+      <p class="info">Mise a jour en cours...</p>
+    }
+  }
+</section>

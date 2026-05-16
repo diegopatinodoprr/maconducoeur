@@ -1,0 +1,140 @@
+.panel {
+  background: #ffffff;
+  border: 1px solid #e6efe8;
+  border-radius: 14px;
+  padding: 1rem;
+  box-shadow: 0 10px 25px rgba(32, 72, 42, 0.05);
+}
+
+h2 {
+  margin: 0 0 0.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.cards {
+  margin-top: 0.85rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.search-box {
+  margin-top: 0.7rem;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: #f8fafd;
+  border: 1px solid #e4ecf7;
+  border-radius: 10px;
+  padding: 0.45rem 0.6rem;
+}
+
+.search-box input {
+  border: 0;
+  outline: none;
+  background: transparent;
+  width: 100%;
+}
+
+.filters {
+  margin-top: 0.6rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.filters button {
+  border: 1px solid #d6e2f3;
+  border-radius: 999px;
+  background: #f5f9ff;
+  color: #2b4e73;
+  padding: 0.35rem 0.7rem;
+  font-weight: 600;
+}
+
+.filters button.active {
+  background: #2f6f3e;
+  color: #fff;
+  border-color: #2f6f3e;
+}
+
+article {
+  background: #f7fbf8;
+  border: 1px solid #e7efe8;
+  border-radius: 12px;
+  padding: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+article .material-symbols-outlined {
+  color: #2f6f3e;
+  font-size: 1.4rem;
+  align-self: flex-start;
+}
+
+.tool-image {
+  width: 58px;
+  height: 58px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 1px solid #d7e6da;
+  align-self: flex-start;
+}
+
+h3 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.tool-body {
+  width: 100%;
+}
+
+p {
+  margin: 0.25rem 0 0.6rem;
+  color: #5b6a60;
+  font-size: 0.85rem;
+}
+
+.owners {
+  margin-top: 0.25rem;
+  display: grid;
+  gap: 0.25rem;
+}
+
+.owners small {
+  color: #53635a;
+  font-size: 0.77rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.owners .material-symbols-outlined {
+  font-size: 1rem;
+  color: #486353;
+}
+
+.reserve-btn {
+  margin-top: 0.65rem;
+  display: inline-flex;
+  border: 0;
+  border-radius: 9px;
+  padding: 0.5rem 0.75rem;
+  background: #2f6f3e;
+  color: #fff;
+  font-weight: 600;
+}
+
+.reserve-btn.disabled {
+  background: #b9c2cf;
+  color: #f7f9fc;
+}
+
+.empty {
+  color: #607284;
+  margin-top: 0.4rem;
+}

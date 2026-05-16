@@ -1,0 +1,117 @@
+<section class="panel">
+  <h2><span class="material-symbols-outlined">handyman</span>Gestion des Outils</h2>
+  <p>Creation d'outils et vue d'ensemble des disponibilites.</p>
+
+  <form class="form" (ngSubmit)="addTool()">
+    <label>
+      <span class="material-symbols-outlined">title</span>
+      <input name="nom" [(ngModel)]="nom" placeholder="Nom de l'outil" required />
+    </label>
+
+    <label>
+      <span class="material-symbols-outlined">category</span>
+      <select name="categorie" [(ngModel)]="categorie">
+        @for (cat of categories; track cat) {
+          <option [value]="cat">{{ cat }}</option>
+        }
+      </select>
+    </label>
+
+    <label>
+      <span class="material-symbols-outlined">verified</span>
+      <select name="etat" [(ngModel)]="etat">
+        @for (state of states; track state) {
+          <option [value]="state">{{ state }}</option>
+        }
+      </select>
+    </label>
+
+    <label>
+      <span class="material-symbols-outlined">factory</span>
+      <select name="marque_id" [(ngModel)]="marque_id" required>
+        <option value="" disabled>Choisir une marque</option>
+        @for (m of manufacturers(); track m.id) {
+          <option [value]="m.id">{{ m.nom }}</option>
+        }
+      </select>
+    </label>
+
+    <label>
+      <span class="material-symbols-outlined">person</span>
+      <select name="owner_user_id" [(ngModel)]="owner_user_id" required>
+        <option value="" disabled>Choisir un proprietaire</option>
+        @for (u of users(); track u.id) {
+          <option [value]="u.id">{{ u.first_name }} {{ u.last_name }} ({{ u.email }})</option>
+        }
+      </select>
+    </label>
+
+    <label>
+      <span class="material-symbols-outlined">location_on</span>
+      <select name="localisation_address_id" [(ngModel)]="localisation_address_id" required>
+        <option value="" disabled>Choisir une localisation</option>
+        @for (a of addresses(); track a.id) {
+          <option [value]="a.id">{{ a.label }}</option>
+        }
+      </select>
+    </label>
+
+    <label>
+      <span class="material-symbols-outlined">front_hand</span>
+      <select name="borrowed_by_user_id" [(ngModel)]="borrowed_by_user_id">
+        <option value="">Aucun emprunteur</option>
+        @for (u of users(); track u.id) {
+          <option [value]="u.id">{{ u.first_name }} {{ u.last_name }} ({{ u.email }})</option>
+        }
+      </select>
+    </label>
+
+    <label>
+      <span class="material-symbols-outlined">description</span>
+      <input name="description" [(ngModel)]="description" placeholder="Description" />
+    </label>
+
+    <label class="checkbox-row">
+      <input type="checkbox" name="disponible" [(ngModel)]="disponible" [disabled]="!!borrowed_by_user_id" />
+      Disponible
+    </label>
+
+    <button type="submit">
+      <span class="material-symbols-outlined">add_circle</span>
+      Ajouter
+    </button>
+  </form>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Categorie</th>
+          <th>Marque</th>
+          <th>Etat</th>
+          <th>Proprietaire</th>
+          <th>Emprunteur</th>
+          <th>Disponibilite</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (tool of tools(); track tool.id) {
+          <tr>
+            <td>{{ tool.nom }}</td>
+            <td><span class="chip">{{ tool.categorie }}</span></td>
+            <td>{{ tool.marque || '-' }}</td>
+            <td>{{ tool.etat }}</td>
+            <td>{{ displayUser(tool.owner_user) }}</td>
+            <td>{{ displayUser(tool.borrowed_by_user) }}</td>
+            <td>
+              <span class="chip" [class.available]="tool.disponible">
+                {{ tool.disponible ? 'Disponible' : 'Emprunte' }}
+              </span>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>

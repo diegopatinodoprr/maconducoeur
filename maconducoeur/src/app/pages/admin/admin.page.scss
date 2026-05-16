@@ -1,0 +1,54 @@
+.panel {
+  background: #ffffff;
+  border: 1px solid #e7edf7;
+  border-radius: 14px;
+  padding: 1rem;
+  box-shadow: 0 10px 25px rgba(26, 56, 103, 0.05);
+}
+
+h2 {
+  margin: 0 0 0.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.table-wrap {
+  margin-top: 0.8rem;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.7rem;
+  border-bottom: 1px solid #f1f4f7;
+  white-space: nowrap;
+}
+
+th {
+  font-size: 0.85rem;
+  color: #5f6b7a;
+}
+
+.role {
+  background: #edf3fb;
+  color: #245080;
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.role.admin {
+  background: #e9f7ec;
+  color: #206033;
+}

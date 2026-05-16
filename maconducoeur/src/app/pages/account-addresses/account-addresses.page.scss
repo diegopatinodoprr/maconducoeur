@@ -1,0 +1,95 @@
+.panel {
+  background: #fff;
+  border: 1px solid #e4ebf6;
+  border-radius: 14px;
+  padding: 1rem;
+}
+
+h2 {
+  margin: 0 0 0.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.form {
+  margin-top: 0.8rem;
+  display: grid;
+  gap: 0.55rem;
+}
+
+input {
+  border: 1px solid #dbe3f0;
+  border-radius: 8px;
+  padding: 0.55rem 0.65rem;
+}
+
+button {
+  width: fit-content;
+  border: 0;
+  border-radius: 8px;
+  padding: 0.5rem 0.7rem;
+  background: #2f6f3e;
+  color: #fff;
+  font-weight: 600;
+}
+
+.addresses {
+  margin-top: 0.9rem;
+
+  article {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.7rem;
+    border: 1px solid #e8edf7;
+    border-radius: 10px;
+    margin-bottom: 0.55rem;
+    background: #fff;
+  }
+
+  p {
+    margin: 0.2rem 0 0;
+    color: #5d6a7a;
+  }
+
+  .material-symbols-outlined {
+    color: #446391;
+  }
+}
+
+.address-image {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid #dbe3f0;
+}
+
+.photo-btn {
+  margin-top: 0.35rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: #2f5b91;
+  font-weight: 600;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.photo-btn input {
+  display: none;
+}
+
+button.danger {
+  background: #b42318;
+}
+
+.success {
+  color: #206d36;
+}
+
+.error {
+  color: #b42318;
+}

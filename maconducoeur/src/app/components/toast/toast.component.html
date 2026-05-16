@@ -1,0 +1,10 @@
+<div class="toast-container">
+  @for (t of toast.items(); track t.id) {
+    <div class="toast" [class.success]="t.type === 'success'" [class.error]="t.type === 'error'" [class.info]="t.type === 'info'">
+      <span>{{ t.message }}</span>
+      <button type="button" (click)="toast.dismiss(t.id)">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+  }
+</div>

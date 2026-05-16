@@ -1,0 +1,156 @@
+.panel {
+  background: #ffffff;
+  border: 1px solid #e7edf7;
+  border-radius: 14px;
+  padding: 1rem;
+  box-shadow: 0 10px 25px rgba(26, 56, 103, 0.05);
+}
+
+h2 {
+  margin: 0 0 0.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.form {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0.9rem 0 1rem;
+}
+
+label {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: #f8fafd;
+  border: 1px solid #e4ecf7;
+  border-radius: 10px;
+  padding: 0.45rem 0.6rem;
+}
+
+input,
+select {
+  border: 0;
+  background: transparent;
+  width: 100%;
+  outline: none;
+}
+
+.checkbox-row {
+  width: fit-content;
+  gap: 0.6rem;
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+
+.checkbox-row input {
+  width: auto;
+}
+
+button {
+  border: 0;
+  border-radius: 9px;
+  padding: 0.55rem 0.7rem;
+  background: #2f6f3e;
+  color: #fff;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  width: fit-content;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+th,
+td {
+  padding: 0.6rem;
+  border-bottom: 1px solid #eef2f8;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.chip {
+  background: #edf3fb;
+  color: #2b4e73;
+  border-radius: 999px;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.chip.available {
+  background: #e8f6ea;
+  color: #226235;
+}
+
+@media (max-width: 768px) {
+  .panel {
+    padding: 0.9rem;
+  }
+
+  .table-wrap {
+    overflow: visible;
+  }
+
+  table,
+  thead,
+  tbody,
+  th,
+  td,
+  tr {
+    display: block;
+    width: 100%;
+  }
+
+  thead {
+    display: none;
+  }
+
+  tbody {
+    display: grid;
+    gap: 0.65rem;
+  }
+
+  tr {
+    border: 1px solid #e7edf7;
+    border-radius: 12px;
+    background: #fff;
+    padding: 0.55rem 0.65rem;
+  }
+
+  td {
+    border: 0;
+    white-space: normal;
+    padding: 0.3rem 0;
+    font-size: 0.92rem;
+  }
+
+  td::before {
+    display: block;
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: #607284;
+    margin-bottom: 0.12rem;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  tbody tr td:nth-child(1)::before { content: 'Nom'; }
+  tbody tr td:nth-child(2)::before { content: 'Categorie'; }
+  tbody tr td:nth-child(3)::before { content: 'Marque'; }
+  tbody tr td:nth-child(4)::before { content: 'Etat'; }
+  tbody tr td:nth-child(5)::before { content: 'Proprietaire'; }
+  tbody tr td:nth-child(6)::before { content: 'Emprunteur'; }
+  tbody tr td:nth-child(7)::before { content: 'Disponibilite'; }
+}

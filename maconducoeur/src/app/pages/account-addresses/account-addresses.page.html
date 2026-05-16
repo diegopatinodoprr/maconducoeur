@@ -1,0 +1,35 @@
+<section class="panel">
+  <h2><span class="material-symbols-outlined">home_pin</span>Gestion des Adresses</h2>
+  <p>Ajout et suppression de tes adresses. La seule modification possible est la photo.</p>
+
+  <form class="form" (ngSubmit)="addAddress()" #addressForm="ngForm">
+    <input name="label" [(ngModel)]="addressLabel" placeholder="Label (ex: Chez Pierre)" required />
+    <input name="rue" [(ngModel)]="addressRue" placeholder="Rue" required />
+    <input name="ville" [(ngModel)]="addressVille" placeholder="Ville" required />
+    <input name="code_postal" [(ngModel)]="addressCodePostal" placeholder="Code postal" required />
+    <button type="submit">Ajouter adresse</button>
+  </form>
+
+  <div class="addresses">
+    @for (a of addresses(); track a.id) {
+      <article>
+        @if (fullImageUrl(a.image_url); as addressImg) {
+          <img [src]="addressImg" alt="Photo adresse" class="address-image" />
+        } @else {
+          <span class="material-symbols-outlined">home_pin</span>
+        }
+        <div>
+          <strong>{{ a.label }}</strong>
+          <p>{{ a.rue }}</p>
+          <p>{{ a.code_postal }} {{ a.ville }}</p>
+          <label class="photo-btn">
+            <span class="material-symbols-outlined">add_a_photo</span>
+            Ajouter/Changer photo
+            <input type="file" accept="image/png,image/jpeg,image/webp" (change)="onAddressPhotoSelected(a.id, $event)" />
+          </label>
+        </div>
+        <button type="button" class="danger" (click)="deleteAddress(a.id)">Supprimer</button>
+      </article>
+    }
+  </div>
+</section>

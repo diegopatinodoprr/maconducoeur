@@ -1,0 +1,107 @@
+<section class="panel">
+  <h2><span class="material-symbols-outlined">handyman</span>Mes Outils</h2>
+  <p>Ajoutez vos outils, mettez a jour leur disponibilite, localisation et photo.</p>
+
+  <form class="form" (ngSubmit)="addTool()">
+    <label>
+      <span class="material-symbols-outlined">title</span>
+      <input name="nom" [(ngModel)]="nom" placeholder="Nom de l'outil" required />
+    </label>
+
+    <label>
+      <span class="material-symbols-outlined">factory</span>
+      <select name="marque_id" [(ngModel)]="marque_id" required>
+        <option value="" disabled>Choisir une marque</option>
+        @for (m of manufacturers(); track m.id) {
+          <option [value]="m.id">{{ m.nom }}</option>
+        }
+      </select>
+    </label>
+
+    <label>
+      <span class="material-symbols-outlined">category</span>
+      <select name="categorie" [(ngModel)]="categorie">
+        @for (cat of categories; track cat) {
+          <option [value]="cat">{{ cat }}</option>
+        }
+      </select>
+    </label>
+
+    <label>
+      <span class="material-symbols-outlined">verified</span>
+      <select name="etat" [(ngModel)]="etat">
+        @for (state of states; track state) {
+          <option [value]="state">{{ state }}</option>
+        }
+      </select>
+    </label>
+
+    <label>
+      <span class="material-symbols-outlined">location_on</span>
+      <select name="localisation_address_id" [(ngModel)]="localisation_address_id" required>
+        <option value="" disabled>Choisir une adresse</option>
+        @for (a of addresses(); track a.id) {
+          <option [value]="a.id">{{ a.label }}</option>
+        }
+      </select>
+    </label>
+
+    <label>
+      <span class="material-symbols-outlined">description</span>
+      <input name="description" [(ngModel)]="description" placeholder="Description" />
+    </label>
+
+    <label class="checkbox-row">
+      <input type="checkbox" name="disponible" [(ngModel)]="disponible" />
+      Disponible a l'emprunt
+    </label>
+
+    <button type="submit">
+      <span class="material-symbols-outlined">add_circle</span>
+      Ajouter
+    </button>
+  </form>
+
+  <div class="cards">
+    @for (tool of tools(); track tool.id) {
+      <article>
+        @if (fullImageUrl(tool.image_url); as imageUrl) {
+          <img [src]="imageUrl" [alt]="tool.nom" class="tool-image" />
+        } @else {
+          <span class="material-symbols-outlined">construction</span>
+        }
+
+        <div class="tool-body">
+          <h3>{{ tool.nom }}</h3>
+          <p>{{ tool.description || 'Sans description' }}</p>
+          <small>Marque: {{ tool.marque || '-' }}</small>
+          <small>Etat: {{ tool.etat }}</small>
+          <small>Localisation: {{ tool.localisation_address?.label || '-' }}</small>
+
+          <label class="inline-field">
+            <span>Localisation</span>
+            <select #locationInput [value]="tool.localisation_address_id || ''">
+              <option value="" disabled>Choisir une adresse</option>
+              @for (a of addresses(); track a.id) {
+                <option [value]="a.id">{{ a.label }}</option>
+              }
+            </select>
+            <button type="button" (click)="updateLocalisation(tool, locationInput.value)">Enregistrer</button>
+          </label>
+
+          <div class="actions">
+            <button type="button" (click)="toggleAvailability(tool)">
+              {{ tool.disponible ? 'Passer indisponible' : 'Rendre disponible' }}
+            </button>
+
+            <label class="upload-btn">
+              <span class="material-symbols-outlined">photo_camera</span>
+              Changer photo
+              <input type="file" accept="image/*" (change)="onToolPhotoSelected(tool.id, $event)" />
+            </label>
+          </div>
+        </div>
+      </article>
+    }
+  </div>
+</section>

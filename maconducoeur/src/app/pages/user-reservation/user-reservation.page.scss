@@ -1,0 +1,58 @@
+.panel {
+  background: #fff;
+  border: 1px solid #e6efe8;
+  border-radius: 14px;
+  padding: 1rem;
+}
+
+h2 {
+  margin: 0 0 0.6rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+p {
+  margin: 0.25rem 0;
+}
+
+.form {
+  margin-top: 0.85rem;
+  display: grid;
+  gap: 0.7rem;
+}
+
+label {
+  display: grid;
+  gap: 0.35rem;
+  font-weight: 600;
+  color: #2d3e33;
+}
+
+input {
+  border: 1px solid #dbe3f0;
+  border-radius: 8px;
+  padding: 0.55rem 0.65rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.55rem;
+  align-items: center;
+}
+
+button,
+.link-btn {
+  width: fit-content;
+  border: 0;
+  border-radius: 8px;
+  padding: 0.5rem 0.7rem;
+  background: #2f6f3e;
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.error {
+  color: #b42318;
+}

@@ -1,0 +1,56 @@
+<section class="panel">
+  <h2><span class="material-symbols-outlined">factory</span>Gestion des Marques d'outils</h2>
+  <p>Onglet reserve aux administrateurs.</p>
+
+  <form class="form" (ngSubmit)="addManufacturer()">
+    <label>
+      <span class="material-symbols-outlined">badge</span>
+      <input name="nom" [(ngModel)]="nom" placeholder="Nom" required />
+    </label>
+    <label>
+      <span class="material-symbols-outlined">public</span>
+      <input name="pays" [(ngModel)]="pays" placeholder="Pays" />
+    </label>
+    <label>
+      <span class="material-symbols-outlined">language</span>
+      <input name="site_web" [(ngModel)]="site_web" placeholder="Site web" />
+    </label>
+    <label>
+      <span class="material-symbols-outlined">image</span>
+      <input name="icon" [(ngModel)]="icon" placeholder="Icon (ex: bosch)" />
+    </label>
+    <button type="submit">
+      <span class="material-symbols-outlined">add_circle</span>
+      Ajouter
+    </button>
+  </form>
+
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Pays</th>
+          <th>Icon</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (m of manufacturers(); track m.id) {
+          <tr>
+            <td>{{ m.nom }}</td>
+            <td>{{ m.pays || '-' }}</td>
+            <td><span class="chip">{{ m.icon || '-' }}</span></td>
+            <td>
+              <button type="button" (click)="deleteManufacturer(m.id)">
+                <span class="material-symbols-outlined">delete</span>
+                Supprimer
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>

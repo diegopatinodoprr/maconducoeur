@@ -1,0 +1,104 @@
+<section class="panel">
+  <h2><span class="material-symbols-outlined">front_hand</span>Mes Emprunts</h2>
+  <p>Suivi des prets, validations et objets empruntes.</p>
+
+  <div class="tabs">
+    <button type="button" [class.active]="activeTab() === 'lent'" (click)="setTab('lent')">Mes objets pretes</button>
+    <button type="button" [class.active]="activeTab() === 'to_validate'" (click)="setTab('to_validate')">Demandes a valider</button>
+    <button type="button" [class.active]="activeTab() === 'borrowed'" (click)="setTab('borrowed')">Objets que j'ai empruntes</button>
+  </div>
+
+  @if (activeTab() === 'lent') {
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Objet</th>
+            <th>Chez qui il est</th>
+            <th>Depuis quand</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (b of myLentObjects(); track b.id) {
+            <tr>
+              <td>{{ toolName(b.tool_id) }}</td>
+              <td>{{ userName(b.borrower_user_id) }}</td>
+              <td>{{ b.start_date | date: 'shortDate' }}</td>
+              <td>
+                @if (b.status === 'active') {
+                  <button type="button" (click)="finishBorrowing(b.id)">Marquer retourne</button>
+                } @else {
+                  -
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="4" class="empty-cell">Aucun objet prete pour le moment.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  @if (activeTab() === 'to_validate') {
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Objet demande</th>
+            <th>Qui le demande</th>
+            <th>Pour quelle date</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (b of toValidate(); track b.id) {
+            <tr>
+              <td>{{ toolName(b.tool_id) }}</td>
+              <td>{{ userName(b.borrower_user_id) }}</td>
+              <td>{{ b.start_date | date: 'shortDate' }} -> {{ b.end_date | date: 'shortDate' }}</td>
+              <td>
+                <button type="button" (click)="activateBorrowing(b.id)">Valider</button>
+                <button type="button" class="danger" (click)="rejectBorrowing(b.id)">Refuser</button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="4" class="empty-cell">Aucune demande en attente.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  @if (activeTab() === 'borrowed') {
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Objet</th>
+          <th>A qui il appartient</th>
+          <th>Depuis quand</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (b of myBorrowedObjects(); track b.id) {
+          <tr>
+            <td>{{ toolName(b.tool_id) }}</td>
+            <td>{{ userName(b.owner_user_id) }}</td>
+            <td>{{ b.start_date | date: 'shortDate' }}</td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="3" class="empty-cell">Vous n'avez aucun objet emprunte.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  }
+</section>

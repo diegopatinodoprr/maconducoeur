@@ -1,0 +1,154 @@
+.panel {
+  background: #fff;
+  border: 1px solid #e7edf7;
+  border-radius: 14px;
+  padding: 1rem;
+}
+
+h2 {
+  margin: 0 0 0.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.tabs {
+  margin-top: 0.85rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.tabs button {
+  border: 1px solid #d6e2f3;
+  border-radius: 999px;
+  background: #f5f9ff;
+  color: #2b4e73;
+  padding: 0.55rem 0.8rem;
+  min-height: 44px;
+  font-weight: 600;
+}
+
+.tabs button.active {
+  background: #2f6f3e;
+  color: #fff;
+  border-color: #2f6f3e;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  margin-top: 0.8rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 0.6rem;
+  border-bottom: 1px solid #eef2f8;
+  text-align: left;
+  white-space: nowrap;
+}
+
+td button {
+  border: 0;
+  border-radius: 8px;
+  background: #2f6f3e;
+  color: #fff;
+  font-weight: 600;
+  padding: 0.35rem 0.6rem;
+  margin-right: 0.35rem;
+}
+
+td button.danger {
+  background: #b42318;
+}
+
+.empty-cell {
+  color: #607284;
+  text-align: center;
+  padding: 0.9rem 0.6rem;
+}
+
+@media (max-width: 768px) {
+  .panel {
+    padding: 0.9rem;
+  }
+
+  .tabs {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .tabs button {
+    width: 100%;
+    text-align: center;
+    border-radius: 12px;
+  }
+
+  .table-wrap {
+    overflow: visible;
+  }
+
+  table,
+  thead,
+  tbody,
+  th,
+  td,
+  tr {
+    display: block;
+    width: 100%;
+  }
+
+  thead {
+    display: none;
+  }
+
+  tbody {
+    display: grid;
+    gap: 0.65rem;
+  }
+
+  tr {
+    border: 1px solid #e7edf7;
+    border-radius: 12px;
+    background: #fff;
+    padding: 0.55rem 0.65rem;
+  }
+
+  td {
+    border: 0;
+    white-space: normal;
+    padding: 0.3rem 0;
+    font-size: 0.92rem;
+  }
+
+  td::before {
+    display: block;
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: #607284;
+    margin-bottom: 0.12rem;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  tbody tr td:nth-child(1)::before { content: 'Objet'; }
+  tbody tr td:nth-child(2)::before { content: 'Infos'; }
+  tbody tr td:nth-child(3)::before { content: 'Date'; }
+  tbody tr td:nth-child(4)::before { content: 'Action'; }
+
+  td button {
+    margin-top: 0.15rem;
+    margin-right: 0.4rem;
+  }
+
+  .empty-cell {
+    text-align: left;
+    padding: 0.45rem 0;
+  }
+}

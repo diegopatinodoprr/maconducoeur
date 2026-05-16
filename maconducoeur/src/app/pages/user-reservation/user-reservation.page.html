@@ -1,0 +1,30 @@
+<section class="panel">
+  <h2><span class="material-symbols-outlined">event_available</span>Reservation d'outil</h2>
+
+  @if (tool(); as t) {
+    <p><strong>Outil:</strong> {{ t.nom }}</p>
+    <p><strong>Proprietaire:</strong> {{ t.owner_user?.first_name }} {{ t.owner_user?.last_name }}</p>
+
+    @if (!t.disponible) {
+      <p class="error">Cet outil n'est plus disponible.</p>
+      <a class="link-btn" routerLink="/utilisateur/utils/catalogue">Retour au catalogue</a>
+    } @else {
+      <form class="form" (ngSubmit)="submitReservation()">
+        <label>
+          Date de debut
+          <input type="date" name="startDate" [(ngModel)]="startDate" required />
+        </label>
+        <label>
+          Date de fin
+          <input type="date" name="endDate" [(ngModel)]="endDate" required />
+        </label>
+        <div class="actions">
+          <button type="submit">Envoyer la demande</button>
+          <a class="link-btn" routerLink="/utilisateur/utils/catalogue">Annuler</a>
+        </div>
+      </form>
+    }
+  } @else {
+    <p>Chargement...</p>
+  }
+</section>

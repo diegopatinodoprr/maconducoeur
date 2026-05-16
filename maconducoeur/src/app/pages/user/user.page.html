@@ -1,0 +1,50 @@
+<section class="panel">
+  <h2><span class="material-symbols-outlined">home_repair_service</span>Catalogue</h2>
+  <p>Rechercher et reserver les outils partages.</p>
+
+  <label class="search-box">
+    <span class="material-symbols-outlined">search</span>
+    <input
+      type="search"
+      [ngModel]="search()"
+      (ngModelChange)="onSearch($event)"
+      placeholder="Rechercher un outil, proprietaire ou emprunteur"
+    />
+  </label>
+
+  <div class="filters">
+    <button type="button" [class.active]="statusFilter() === 'all'" (click)="setStatusFilter('all')">Tous</button>
+    <button type="button" [class.active]="statusFilter() === 'available'" (click)="setStatusFilter('available')">Disponibles</button>
+    <button type="button" [class.active]="statusFilter() === 'borrowed'" (click)="setStatusFilter('borrowed')">En pret</button>
+  </div>
+
+  <div class="cards">
+    @for (tool of filteredTools(); track tool.id) {
+      <article>
+        @if (fullImageUrl(tool.image_url); as imageUrl) {
+          <img [src]="imageUrl" [alt]="tool.nom" class="tool-image" />
+        } @else {
+          <span class="material-symbols-outlined">{{ iconForCategory(tool.categorie) }}</span>
+        }
+        <div class="tool-body">
+          <h3>{{ tool.nom }}</h3>
+          <div class="owners">
+            <small>
+              <span class="material-symbols-outlined">person</span>
+              Proprietaire: {{ displayUser(tool.owner_user) }}
+            </small>
+            <small>
+              <span class="material-symbols-outlined">front_hand</span>
+              Emprunteur: {{ displayUser(tool.borrowed_by_user) }}
+            </small>
+          </div>
+          <button type="button" class="reserve-btn" [class.disabled]="!tool.disponible" [disabled]="!tool.disponible" (click)="reserve(tool)">
+            Reserver
+          </button>
+        </div>
+      </article>
+    } @empty {
+      <p class="empty">Aucun outil ne correspond a la recherche.</p>
+    }
+  </div>
+</section>

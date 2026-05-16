@@ -1,0 +1,18 @@
+<section class="login-shell">
+  <article class="login-card">
+    <h2>Connexion</h2>
+    <p>Accede a ton espace outils.</p>
+
+    <form (ngSubmit)="onSubmit()">
+      <label>Email
+        <input type="email" name="email" [(ngModel)]="email" required />
+      </label>
+
+      <label>Mot de passe
+        <input type="password" name="password" [(ngModel)]="password" required />
+      </label>
+
+      <button type="submit">Se connecter</button>
+    </form>
+  </article>
+</section>

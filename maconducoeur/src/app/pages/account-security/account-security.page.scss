@@ -1,0 +1,43 @@
+.panel {
+  background: #fff;
+  border: 1px solid #e4ebf6;
+  border-radius: 14px;
+  padding: 1rem;
+}
+
+h2 {
+  margin: 0 0 0.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.form {
+  margin-top: 0.8rem;
+  display: grid;
+  gap: 0.55rem;
+}
+
+input {
+  border: 1px solid #dbe3f0;
+  border-radius: 8px;
+  padding: 0.55rem 0.65rem;
+}
+
+button {
+  width: fit-content;
+  border: 0;
+  border-radius: 8px;
+  padding: 0.5rem 0.7rem;
+  background: #2f6f3e;
+  color: #fff;
+  font-weight: 600;
+}
+
+.success {
+  color: #206d36;
+}
+
+.error {
+  color: #b42318;
+}

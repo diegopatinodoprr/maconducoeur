@@ -1,0 +1,89 @@
+<div class="layout">
+  <app-toast></app-toast>
+  <header class="topbar">
+    <div class="actions">
+      @if (auth.token()) {
+        <button class="burger-btn" (click)="toggleSidenav()" aria-label="Ouvrir le menu">
+          <span class="material-symbols-outlined">{{ sidenavOpen ? 'close' : 'menu' }}</span>
+        </button>
+      }
+    </div>
+    <div class="brand">
+      <span class="material-symbols-outlined">construction</span>
+      <div>
+        <h1>Maçonducoeur</h1>
+        <p>Echange et pret d'outils de bricolage entre amis</p>
+      </div>
+    </div>
+  </header>
+
+  <div class="workspace" [class.with-sidenav]="!!auth.token()" [class.menu-open]="sidenavOpen">
+    @if (auth.token()) {
+      <button class="sidenav-backdrop" [class.open]="sidenavOpen" type="button" aria-label="Fermer le menu" (click)="closeSidenav()"></button>
+      <aside class="sidenav" [class.open]="sidenavOpen">
+        <section class="nav-group">
+          <h3>Compte</h3>
+          <a routerLink="/compte" routerLinkActive="active" (click)="closeSidenav()">
+            <span class="material-symbols-outlined">account_circle</span>
+            Gestion du compte
+          </a>
+          <a routerLink="/compte/adresses" routerLinkActive="active" (click)="closeSidenav()">
+            <span class="material-symbols-outlined">home_pin</span>
+            Gestion des Adresses
+          </a>
+          <a routerLink="/compte/securite" routerLinkActive="active" (click)="closeSidenav()">
+            <span class="material-symbols-outlined">security</span>
+            Securite
+          </a>
+        </section>
+
+        <section class="nav-group">
+          <h3>Outils</h3>
+          <a routerLink="/utilisateur/utils/mes-outils" routerLinkActive="active" (click)="closeSidenav()">
+            <span class="material-symbols-outlined">handyman</span>
+            Mes outils
+          </a>
+          <a routerLink="/utilisateur/utils/catalogue" routerLinkActive="active" (click)="closeSidenav()">
+            <span class="material-symbols-outlined">inventory_2</span>
+            Catalogue partage
+          </a>
+          <a routerLink="/utilisateur/utils/mes-emprunts" routerLinkActive="active" (click)="closeSidenav()">
+            <span class="material-symbols-outlined">front_hand</span>
+            Mes emprunts
+          </a>
+        </section>
+
+        @if (auth.role() === 'admin') {
+          <section class="nav-group">
+            <h3>Administration</h3>
+            <a routerLink="/admin" routerLinkActive="active" (click)="closeSidenav()">
+              <span class="material-symbols-outlined">groups</span>
+              Utilisateurs
+            </a>
+            <a routerLink="/admin/utils" routerLinkActive="active" (click)="closeSidenav()">
+              <span class="material-symbols-outlined">handyman</span>
+              Outils
+            </a>
+            <a routerLink="/admin/marques" routerLinkActive="active" (click)="closeSidenav()">
+              <span class="material-symbols-outlined">factory</span>
+              Marques d'outils
+            </a>
+          </section>
+        }
+
+        <button class="logout-nav-btn" (click)="logout()">
+          <span class="material-symbols-outlined">logout</span>
+          Deconnexion
+        </button>
+      </aside>
+    }
+
+    <main class="content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+
+  <footer class="app-footer">
+    <small>Maçonducoeur</small>
+  </footer>
+</div>

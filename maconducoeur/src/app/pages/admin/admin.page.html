@@ -1,0 +1,29 @@
+<section class="panel">
+  <h2><span class="material-symbols-outlined">admin_panel_settings</span>Espace Administration</h2>
+  <p>Gestion des membres du groupe et supervision des echanges d'outils.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nom</th>
+          <th>Email</th>
+          <th>Role</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (u of users(); track u.id) {
+          <tr>
+            <td>{{ u.id }}</td>
+            <td>{{ u.first_name }} {{ u.last_name }}</td>
+            <td>{{ u.email }}</td>
+            <td>
+              <span class="role" [class.admin]="u.role === 'admin'">{{ u.role }}</span>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>
