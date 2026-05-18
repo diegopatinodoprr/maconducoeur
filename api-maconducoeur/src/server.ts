@@ -2,6 +2,8 @@ import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
 import type { NextFunction, Request, Response } from 'express';
+import { createServer } from 'http';
+import WebSocket, { WebSocketServer } from 'ws';
 import authRoutes from './routes/auth.js';
 import adminRoutes from './routes/admin.js';
 import borrowingRoutes from './routes/borrowings.js';
@@ -10,8 +12,10 @@ import healthRoutes from './routes/health.js';
 import toolRoutes from './routes/tools.js';
 import userRoutes from './routes/users.js';
 import { env } from './config/env.js';
+import { AppEvent, setEventBroadcaster } from './realtime/events.js';
 
 const app = express();
+const httpServer = createServer(app);
 
 function maskSensitiveBody(body: unknown): unknown {
   if (!body || typeof body !== 'object') return body;
@@ -64,7 +68,18 @@ app.use('/api', toolRoutes);
 app.use('/api', borrowingRoutes);
 app.use('/api', adminRoutes);
 
-app.listen(env.port, () => {
+const wsServer = new WebSocketServer({ server: httpServer, path: '/ws' });
+
+setEventBroadcaster((event: AppEvent) => {
+  const message = JSON.stringify({ kind: 'app.event', event });
+  for (const client of wsServer.clients) {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(message);
+    }
+  }
+});
+
+httpServer.listen(env.port, () => {
   console.log(`[BOOT] Backend running on http://localhost:${env.port}`);
   console.log(`[BOOT] Environment loaded (db="${env.mongo.dbName}")`);
 });

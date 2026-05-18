@@ -3,6 +3,7 @@ import { ObjectId } from 'mongodb';
 import { TOOL_CATEGORIES, isToolCategory } from '../constants/tool-categories.js';
 import { getDb } from '../db/pool.js';
 import { AuthenticatedRequest, requireAuth, requireAdmin } from '../middlewares/auth.js';
+import { emitAppEvent } from '../realtime/events.js';
 import { ToolDocument } from '../types/tool.js';
 
 const router = Router();
@@ -247,8 +248,16 @@ router.post('/utils', requireAuth, async (req, res) => {
     };
 
     const result = await db.collection('utils').insertOne(doc);
+    const createdToolId = result.insertedId.toHexString();
+    emitAppEvent({
+      type: 'tool.created',
+      actor_user_id: authReq.auth?.sub ?? null,
+      entity_id: createdToolId,
+      payload: { owner_user_id: ownerUserId.toHexString() }
+    });
+
     res.status(201).json({
-      id: result.insertedId.toHexString(),
+      id: createdToolId,
       ...doc,
       marque_id: manufacturerId.toHexString(),
       marque: manufacturer.nom,
@@ -492,6 +501,13 @@ router.put('/utils/:id', requireAuth, async (req, res) => {
       return;
     }
 
+    emitAppEvent({
+      type: 'tool.updated',
+      actor_user_id: authReq.auth?.sub ?? null,
+      entity_id: result._id.toHexString(),
+      payload: { scope: 'tool.update' }
+    });
+
     res.json({
       id: result._id.toHexString(),
       nom: result.nom,
@@ -562,6 +578,13 @@ router.put('/utils/:id/image', requireAuth, async (req, res) => {
       res.status(404).json({ message: 'Outil introuvable' });
       return;
     }
+
+    emitAppEvent({
+      type: 'tool.updated',
+      actor_user_id: authReq.auth?.sub ?? null,
+      entity_id: result._id.toHexString(),
+      payload: { scope: 'tool.image' }
+    });
 
     res.json({
       message: 'Image outil mise a jour',

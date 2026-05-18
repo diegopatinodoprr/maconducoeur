@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { ObjectId } from 'mongodb';
 import { getDb } from '../db/pool.js';
 import { AuthenticatedRequest, requireAuth } from '../middlewares/auth.js';
+import { emitAppEvent } from '../realtime/events.js';
 import { BorrowingDocument, BorrowingStatus } from '../types/borrowing.js';
 import { ToolDocument } from '../types/tool.js';
 
@@ -96,6 +97,18 @@ router.post('/borrowings', requireAuth, async (req, res) => {
 
     const result = await db.collection<Omit<BorrowingDocument, '_id'>>('borrowings').insertOne(doc);
     const created: BorrowingDocument = { _id: result.insertedId, ...doc };
+
+    emitAppEvent({
+      type: 'borrowing.requested',
+      actor_user_id: authReq.auth?.sub ?? null,
+      entity_id: created._id.toHexString(),
+      payload: {
+        tool_id: created.tool_id.toHexString(),
+        owner_user_id: created.owner_user_id.toHexString(),
+        borrower_user_id: created.borrower_user_id.toHexString()
+      }
+    });
+
     res.status(201).json(mapBorrowing(created));
   } catch (error) {
     res.status(500).json({ message: 'Erreur serveur', error: (error as Error).message });
@@ -214,6 +227,18 @@ router.put('/borrowings/:id/status', requireAuth, async (req, res) => {
         }
       );
     }
+
+    emitAppEvent({
+      type: 'borrowing.status_changed',
+      actor_user_id: authReq.auth?.sub ?? null,
+      entity_id: result._id.toHexString(),
+      payload: {
+        status,
+        tool_id: result.tool_id.toHexString(),
+        owner_user_id: result.owner_user_id.toHexString(),
+        borrower_user_id: result.borrower_user_id.toHexString()
+      }
+    });
 
     res.json(mapBorrowing(result));
   } catch (error) {

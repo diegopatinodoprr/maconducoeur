@@ -1,8 +1,10 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../services/auth.service';
+import { RealtimeService } from '../../services/realtime.service';
 import { ToastService } from '../../services/toast.service';
 
 type ToolCategory = 'jardin' | 'placo' | 'electricite' | 'bois' | 'eau';
@@ -71,11 +73,25 @@ export class AdminToolsPage implements OnInit {
   constructor(
     private readonly http: HttpClient,
     private readonly auth: AuthService,
-    private readonly toast: ToastService
+    private readonly toast: ToastService,
+    private readonly realtime: RealtimeService,
+    private readonly destroyRef: DestroyRef
   ) {}
 
   ngOnInit(): void {
     this.loadData();
+    this.realtime.events$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((event) => {
+        if (
+          event.type === 'tool.created' ||
+          event.type === 'tool.updated' ||
+          event.type === 'borrowing.requested' ||
+          event.type === 'borrowing.status_changed'
+        ) {
+          this.loadData();
+        }
+      });
   }
 
   private authHeaders(): HttpHeaders {

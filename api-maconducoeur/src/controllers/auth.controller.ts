@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 import { env } from '../config/env.js';
 import { getDb } from '../db/pool.js';
 import { AuthenticatedRequest } from '../middlewares/auth.js';
+import { emitAppEvent } from '../realtime/events.js';
 
 type UserRole = 'admin' | 'user';
 
@@ -13,6 +14,15 @@ type DbUser = {
   email: string;
   password_hash: string;
   role: UserRole;
+};
+
+type DbConnection = {
+  user_id: ObjectId;
+  email: string;
+  role: UserRole;
+  connected_at: Date;
+  ip: string | null;
+  user_agent: string | null;
 };
 
 function authLog(message: string): void {
@@ -75,6 +85,24 @@ export async function login(req: Request, res: Response): Promise<void> {
       env.jwtSecret,
       { expiresIn: '8h' }
     );
+
+    await db.collection<DbConnection>('connections').insertOne({
+      user_id: user._id,
+      email: user.email,
+      role: user.role,
+      connected_at: new Date(),
+      ip: req.ip ?? null,
+      user_agent: req.get('user-agent') ?? null
+    });
+
+    emitAppEvent({
+      type: 'connection.created',
+      actor_user_id: user._id.toHexString(),
+      entity_id: user._id.toHexString(),
+      payload: {
+        role: user.role
+      }
+    });
 
     authLog(`[AUTH][LOGIN] Login successful for email="${email}"`);
     res.json({

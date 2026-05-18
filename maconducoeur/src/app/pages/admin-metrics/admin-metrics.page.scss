@@ -1,0 +1,102 @@
+.panel {
+  background: #ffffff;
+  border: 1px solid #e7edf7;
+  border-radius: 14px;
+  padding: 1rem;
+  box-shadow: 0 10px 25px rgba(26, 56, 103, 0.05);
+}
+
+h2 {
+  margin: 0 0 0.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.kpis {
+  margin: 0.9rem 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.kpi {
+  border: 1px solid #e4ecf7;
+  border-radius: 10px;
+  background: #f7faff;
+  padding: 0.65rem;
+
+  small {
+    display: block;
+    color: #5f6b7a;
+    font-size: 0.78rem;
+    margin-bottom: 0.2rem;
+  }
+
+  strong {
+    font-size: 1.35rem;
+    color: #1d3a5c;
+  }
+}
+
+.refresh-btn {
+  border: 0;
+  border-radius: 9px;
+  padding: 0.5rem 0.7rem;
+  background: #2f6f3e;
+  color: #fff;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.table-wrap {
+  margin-top: 0.8rem;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.65rem;
+  border-bottom: 1px solid #eef2f8;
+  white-space: nowrap;
+}
+
+th {
+  font-size: 0.85rem;
+  color: #5f6b7a;
+}
+
+.role {
+  background: #edf3fb;
+  color: #245080;
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.role.admin {
+  background: #e9f7ec;
+  color: #206033;
+}
+
+.ua {
+  max-width: 420px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 900px) {
+  .kpis {
+    grid-template-columns: 1fr;
+  }
+}

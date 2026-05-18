@@ -1,8 +1,10 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
-import { Component, OnInit, computed, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, computed, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../services/auth.service';
+import { RealtimeService } from '../../services/realtime.service';
 import { ToastService } from '../../services/toast.service';
 
 type ToolCategory = 'jardin' | 'placo' | 'electricite' | 'bois' | 'eau';
@@ -62,11 +64,25 @@ export class UserBorrowedToolsPage implements OnInit {
   constructor(
     private readonly http: HttpClient,
     private readonly auth: AuthService,
-    private readonly toast: ToastService
+    private readonly toast: ToastService,
+    private readonly realtime: RealtimeService,
+    private readonly destroyRef: DestroyRef
   ) {}
 
   ngOnInit(): void {
     this.loadData();
+    this.realtime.events$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((event) => {
+        if (
+          event.type === 'borrowing.requested' ||
+          event.type === 'borrowing.status_changed' ||
+          event.type === 'tool.created' ||
+          event.type === 'tool.updated'
+        ) {
+          this.loadData();
+        }
+      });
   }
 
   private authHeaders(): HttpHeaders {

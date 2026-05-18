@@ -5,6 +5,7 @@ import { AccountAddressesPage } from './pages/account-addresses/account-addresse
 import { AccountSecurityPage } from './pages/account-security/account-security.page';
 import { AccountPage } from './pages/account/account.page';
 import { AdminManufacturersPage } from './pages/admin-manufacturers/admin-manufacturers.page';
+import { AdminMetricsPage } from './pages/admin-metrics/admin-metrics.page';
 import { AdminToolsPage } from './pages/admin-tools/admin-tools.page';
 import { AdminPage } from './pages/admin/admin.page';
 import { LoginPage } from './pages/login/login.page';
@@ -25,6 +26,7 @@ export const routes: Routes = [
   { path: 'utilisateur/utils/catalogue/:id/reservation', component: UserReservationPage, canActivate: [authGuard] },
   { path: 'utilisateur/utils/mes-emprunts', component: UserBorrowedToolsPage, canActivate: [authGuard] },
   { path: 'admin', component: AdminPage, canActivate: [adminGuard] },
+  { path: 'admin/metrics', component: AdminMetricsPage, canActivate: [adminGuard] },
   { path: 'admin/utils', component: AdminToolsPage, canActivate: [adminGuard] },
   { path: 'admin/marques', component: AdminManufacturersPage, canActivate: [adminGuard] },
   { path: '**', redirectTo: '' }

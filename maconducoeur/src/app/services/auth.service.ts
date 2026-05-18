@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, signal } from '@angular/core';
+import { computed, Injectable, signal } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
@@ -13,12 +13,24 @@ interface LoginResponse {
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly apiUrl = environment.apiUrl;
-  readonly token = signal<string | null>(localStorage.getItem('token'));
+  readonly token = signal<string | null>(this.normalizeStoredValue(localStorage.getItem('token')));
   readonly role = signal<Role | null>((localStorage.getItem('role') as Role | null) ?? null);
   readonly userId = signal<string | null>(localStorage.getItem('user_id'));
   readonly email = signal<string | null>(localStorage.getItem('email'));
+  readonly isAuthenticated = computed(() => !!this.token());
 
   constructor(private readonly http: HttpClient) {}
+
+  private normalizeStoredValue(value: string | null): string | null {
+    if (!value) {
+      return null;
+    }
+    const normalized = value.trim().toLowerCase();
+    if (normalized === 'null' || normalized === 'undefined') {
+      return null;
+    }
+    return value;
+  }
 
   login(email: string, password: string) {
     return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, { email, password }).pipe(

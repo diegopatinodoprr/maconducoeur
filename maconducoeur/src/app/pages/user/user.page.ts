@@ -1,8 +1,10 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, computed, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
+import { RealtimeService } from '../../services/realtime.service';
 
 type ToolCategory = 'jardin' | 'placo' | 'electricite' | 'bois' | 'eau';
 
@@ -54,10 +56,23 @@ export class UserPage implements OnInit {
 
   constructor(
     private readonly http: HttpClient,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly realtime: RealtimeService,
+    private readonly destroyRef: DestroyRef
   ) {}
 
   ngOnInit(): void {
+    this.loadTools();
+    this.realtime.events$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((event) => {
+        if (event.type === 'tool.created' || event.type === 'tool.updated' || event.type === 'borrowing.status_changed') {
+          this.loadTools();
+        }
+      });
+  }
+
+  private loadTools(): void {
     this.http
       .get<ToolItem[]>(`${environment.apiUrl}/utils`)
       .subscribe((rows) => this.tools.set(rows.sort((a, b) => Number(b.disponible) - Number(a.disponible))));

@@ -254,8 +254,17 @@
     border-bottom: 0;
     display: flex;
     overflow: visible;
+    overflow-y: auto;
     padding: 1rem;
     min-height: calc(100dvh - var(--header-h) - var(--footer-h));
+    max-height: none;
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+
+  .sidenav-backdrop {
+    display: none;
   }
 
   .nav-group {
