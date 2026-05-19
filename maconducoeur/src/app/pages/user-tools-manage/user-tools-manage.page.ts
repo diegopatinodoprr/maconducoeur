@@ -103,7 +103,7 @@ export class UserToolsManagePage implements OnInit {
       error: () => this.toast.error('Impossible de charger les marques')
     });
 
-    this.http.get<AddressItem[]>(`${environment.apiUrl}/users/addresses`, { headers: this.authHeaders() }).subscribe({
+    this.http.get<AddressItem[]>(`${environment.apiUrl}/users/me/addresses`, { headers: this.authHeaders() }).subscribe({
       next: (rows) => this.addresses.set(rows),
       error: () => this.toast.error('Impossible de charger les adresses')
     });

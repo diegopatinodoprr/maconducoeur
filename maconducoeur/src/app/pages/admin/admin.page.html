@@ -2,28 +2,82 @@
   <h2><span class="material-symbols-outlined">admin_panel_settings</span>Espace Administration</h2>
   <p>Gestion des membres du groupe et supervision des echanges d'outils.</p>
 
-  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Nom</th>
-          <th>Email</th>
-          <th>Role</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (u of users(); track u.id) {
-          <tr>
-            <td>{{ u.id }}</td>
-            <td>{{ u.first_name }} {{ u.last_name }}</td>
-            <td>{{ u.email }}</td>
-            <td>
-              <span class="role" [class.admin]="u.role === 'admin'">{{ u.role }}</span>
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
+  <form class="form" (ngSubmit)="addUser()">
+    <label>
+      <span class="material-symbols-outlined">badge</span>
+      <input name="last_name" [(ngModel)]="last_name" placeholder="Nom" required />
+    </label>
+
+    <label>
+      <span class="material-symbols-outlined">person</span>
+      <input name="first_name" [(ngModel)]="first_name" placeholder="Prenom" required />
+    </label>
+
+    <label>
+      <span class="material-symbols-outlined">manage_accounts</span>
+      <select name="role" [(ngModel)]="role" required>
+        <option value="user">user</option>
+        <option value="admin">admin</option>
+      </select>
+    </label>
+
+    <button type="submit">
+      <span class="material-symbols-outlined">person_add</span>
+      Ajouter un utilisateur
+    </button>
+  </form>
+  <p class="email-preview">Apercu email: <strong>{{ emailPreview() }}</strong></p>
+
+  <h3 class="section-title">Utilisateurs</h3>
+  <div class="cards-list">
+    @for (u of users(); track u.id) {
+      <article class="entity-card clickable" (click)="startEditUser(u)">
+        <div class="entity-head">
+          <strong>{{ u.first_name }} {{ u.last_name }}</strong>
+          <span class="material-symbols-outlined">chevron_right</span>
+        </div>
+        <p class="entity-sub">{{ u.email }}</p>
+        <span class="role" [class.admin]="u.role === 'admin'">{{ u.role }}</span>
+      </article>
+    }
   </div>
 </section>
+
+@if (editingUser(); as current) {
+  <div class="modal-overlay" (click)="cancelEditUser()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <form class="form" (ngSubmit)="saveUserEdit()">
+        <div class="modal-header">
+          <h3>Modifier utilisateur</h3>
+          <div class="actions">
+            <button type="button" class="icon-btn ghost" title="Fermer" aria-label="Fermer" (click)="cancelEditUser()">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+            <button type="button" class="icon-btn secondary" title="Annuler l'edition" aria-label="Annuler l'edition" (click)="cancelEditUser()">
+              <span class="material-symbols-outlined">undo</span>
+            </button>
+            <button type="submit" class="icon-btn" title="Sauvegarder l'edition" aria-label="Sauvegarder l'edition">
+              <span class="material-symbols-outlined">check</span>
+            </button>
+          </div>
+        </div>
+        <label>
+          <span class="material-symbols-outlined">person</span>
+          <input name="edit_first_name" [(ngModel)]="editFirstName" placeholder="Prenom" required />
+        </label>
+        <label>
+          <span class="material-symbols-outlined">badge</span>
+          <input name="edit_last_name" [(ngModel)]="editLastName" placeholder="Nom" required />
+        </label>
+        <label>
+          <span class="material-symbols-outlined">manage_accounts</span>
+          <select name="edit_role" [(ngModel)]="editRole" required>
+            <option value="user">user</option>
+            <option value="admin">admin</option>
+          </select>
+        </label>
+        <p class="editing-hint">Edition de: <strong>{{ current.first_name }} {{ current.last_name }}</strong></p>
+      </form>
+    </div>
+  </div>
+}

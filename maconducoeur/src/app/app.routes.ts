@@ -7,6 +7,7 @@ import { AccountSecurityPage } from './pages/account-security/account-security.p
 import { AccountPage } from './pages/account/account.page';
 import { AdminManufacturersPage } from './pages/admin-manufacturers/admin-manufacturers.page';
 import { AdminMetricsPage } from './pages/admin-metrics/admin-metrics.page';
+import { AdminAddressesPage } from './pages/admin-addresses/admin-addresses.page';
 import { AdminToolsPage } from './pages/admin-tools/admin-tools.page';
 import { AdminPage } from './pages/admin/admin.page';
 import { LoginPage } from './pages/login/login.page';
@@ -30,6 +31,7 @@ export const routes: Routes = [
   { path: 'admin', component: AdminPage, canActivate: [adminGuard] },
   { path: 'admin/metrics', component: AdminMetricsPage, canActivate: [adminGuard] },
   { path: 'admin/utils', component: AdminToolsPage, canActivate: [adminGuard] },
+  { path: 'admin/adresses', component: AdminAddressesPage, canActivate: [adminGuard] },
   { path: 'admin/marques', component: AdminManufacturersPage, canActivate: [adminGuard] },
   { path: '**', redirectTo: '' }
 ];

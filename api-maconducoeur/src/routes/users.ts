@@ -1,7 +1,8 @@
 import { Router } from 'express';
 import { ObjectId } from 'mongodb';
+import bcrypt from 'bcryptjs';
 import { getDb } from '../db/pool.js';
-import { AuthenticatedRequest, requireAuth } from '../middlewares/auth.js';
+import { AuthenticatedRequest, requireAdmin, requireAuth } from '../middlewares/auth.js';
 import { MousseLedgerDocument } from '../types/mousse-ledger.js';
 
 const router = Router();
@@ -16,6 +17,7 @@ type DbUser = {
   credits?: number;
   avatar_file_id?: ObjectId;
   created_at?: Date;
+  password_hash?: string;
 };
 
 type AddressDocument = {
@@ -28,6 +30,13 @@ type AddressDocument = {
   image_file_id?: ObjectId;
   created_at: Date;
   updated_at: Date;
+};
+
+type AddressOwnerDocument = {
+  _id: ObjectId;
+  first_name: string;
+  last_name: string;
+  email: string;
 };
 
 function mapUser(u: DbUser & { avatar_file?: { _id: ObjectId; url: string }[] }) {
@@ -45,7 +54,9 @@ function mapUser(u: DbUser & { avatar_file?: { _id: ObjectId; url: string }[] })
   };
 }
 
-function mapAddress(a: AddressDocument & { image_file?: { _id: ObjectId; url: string }[] }) {
+function mapAddress(
+  a: AddressDocument & { image_file?: { _id: ObjectId; url: string }[]; owner_user?: AddressOwnerDocument[] }
+) {
   return {
     id: a._id.toHexString(),
     user_id: a.user_id.toHexString(),
@@ -55,18 +66,34 @@ function mapAddress(a: AddressDocument & { image_file?: { _id: ObjectId; url: st
     code_postal: a.code_postal,
     image_file_id: a.image_file_id?.toHexString?.() ?? null,
     image_url: a.image_file?.[0]?.url ?? null,
+    owner_user: a.owner_user?.[0]
+      ? {
+          id: a.owner_user[0]._id.toHexString(),
+          first_name: a.owner_user[0].first_name,
+          last_name: a.owner_user[0].last_name,
+          email: a.owner_user[0].email
+        }
+      : null,
     created_at: a.created_at,
     updated_at: a.updated_at
   };
 }
 
-router.get('/users/addresses', requireAuth, async (_req, res) => {
+router.get('/users/addresses', requireAdmin, async (_req, res) => {
   try {
     const db = await getDb();
     const rows = await db
       .collection<AddressDocument>('addresses')
-      .aggregate<AddressDocument & { image_file?: { _id: ObjectId; url: string }[] }>([
+      .aggregate<AddressDocument & { image_file?: { _id: ObjectId; url: string }[]; owner_user?: AddressOwnerDocument[] }>([
         { $sort: { created_at: -1 } },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'user_id',
+            foreignField: '_id',
+            as: 'owner_user'
+          }
+        },
         {
           $lookup: {
             from: 'files',
@@ -79,6 +106,112 @@ router.get('/users/addresses', requireAuth, async (_req, res) => {
       .toArray();
 
     res.json(rows.map((a) => mapAddress(a)));
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur serveur', error: (error as Error).message });
+  }
+});
+
+router.post('/users/addresses', requireAdmin, async (req, res) => {
+  const { label, user_id } = req.body as {
+    label?: string;
+    user_id?: string;
+  };
+
+  if (!label?.trim() || !user_id || !ObjectId.isValid(user_id)) {
+    res.status(400).json({ message: 'label et user_id valides sont requis' });
+    return;
+  }
+
+  try {
+    const db = await getDb();
+    const owner = await db.collection<DbUser>('users').findOne({ _id: new ObjectId(user_id) });
+    if (!owner) {
+      res.status(404).json({ message: 'Utilisateur proprietaire introuvable' });
+      return;
+    }
+
+    const now = new Date();
+    const doc: Omit<AddressDocument, '_id'> = {
+      user_id: new ObjectId(user_id),
+      label: label.trim(),
+      rue: '-',
+      ville: '-',
+      code_postal: '-',
+      created_at: now,
+      updated_at: now
+    };
+
+    const result = await db.collection<AddressDocument>('addresses').insertOne(doc as AddressDocument);
+    res.status(201).json({ id: result.insertedId.toHexString(), ...doc, user_id: doc.user_id.toHexString() });
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur serveur', error: (error as Error).message });
+  }
+});
+
+router.put('/users/addresses/:id', requireAdmin, async (req, res) => {
+  const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+  const { label, rue, ville, code_postal } = req.body as {
+    label?: string;
+    rue?: string;
+    ville?: string;
+    code_postal?: string;
+  };
+
+  if (!ObjectId.isValid(id)) {
+    res.status(400).json({ message: 'ID adresse invalide' });
+    return;
+  }
+
+  if (!label?.trim() || !rue?.trim() || !ville?.trim() || !code_postal?.trim()) {
+    res.status(400).json({ message: 'label, rue, ville, code_postal sont requis' });
+    return;
+  }
+
+  try {
+    const db = await getDb();
+    const result = await db.collection<AddressDocument>('addresses').findOneAndUpdate(
+      { _id: new ObjectId(id) },
+      {
+        $set: {
+          label: label.trim(),
+          rue: rue.trim(),
+          ville: ville.trim(),
+          code_postal: code_postal.trim(),
+          updated_at: new Date()
+        }
+      },
+      { returnDocument: 'after' }
+    );
+
+    if (!result) {
+      res.status(404).json({ message: 'Adresse introuvable' });
+      return;
+    }
+
+    res.json(mapAddress(result));
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur serveur', error: (error as Error).message });
+  }
+});
+
+router.delete('/users/addresses/:id', requireAdmin, async (req, res) => {
+  const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+
+  if (!ObjectId.isValid(id)) {
+    res.status(400).json({ message: 'ID adresse invalide' });
+    return;
+  }
+
+  try {
+    const db = await getDb();
+    const result = await db.collection('addresses').deleteOne({ _id: new ObjectId(id) });
+
+    if (!result.deletedCount) {
+      res.status(404).json({ message: 'Adresse introuvable' });
+      return;
+    }
+
+    res.status(204).send();
   } catch (error) {
     res.status(500).json({ message: 'Erreur serveur', error: (error as Error).message });
   }
@@ -103,6 +236,103 @@ router.get('/users', async (_req, res) => {
       .toArray();
 
     res.json(rows.map((u) => mapUser(u)));
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur serveur', error: (error as Error).message });
+  }
+});
+
+router.post('/users', requireAdmin, async (req, res) => {
+  const { first_name, last_name, role } = req.body as {
+    first_name?: string;
+    last_name?: string;
+    role?: 'admin' | 'user';
+  };
+
+  if (!first_name?.trim() || !last_name?.trim() || (role !== 'admin' && role !== 'user')) {
+    res.status(400).json({ message: 'first_name, last_name et role sont requis' });
+    return;
+  }
+
+  const normalizedFirstName = first_name.trim();
+  const normalizedLastName = last_name.trim();
+  const emailBase = `${normalizedFirstName}.${normalizedLastName}`
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9.]/g, '')
+    .replace(/\.+/g, '.')
+    .replace(/^\.|\.$/g, '') || 'utilisateur';
+  const generatedEmail = `${emailBase}@maconducouer`;
+
+  try {
+    const db = await getDb();
+    const existingUser = await db.collection<DbUser>('users').findOne({ email: generatedEmail });
+    if (existingUser) {
+      res.status(409).json({ message: 'Un utilisateur avec cet email existe deja' });
+      return;
+    }
+
+    const password_hash = await bcrypt.hash('ChangeMe@123', 10);
+    const result = await db.collection<DbUser>('users').insertOne({
+      first_name: normalizedFirstName,
+      last_name: normalizedLastName,
+      email: generatedEmail,
+      role,
+      password_hash,
+      credits: 0,
+      created_at: new Date()
+    } as DbUser);
+
+    res.status(201).json({
+      id: result.insertedId.toHexString(),
+      first_name: normalizedFirstName,
+      last_name: normalizedLastName,
+      email: generatedEmail,
+      role
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur serveur', error: (error as Error).message });
+  }
+});
+
+router.put('/users/:id', requireAdmin, async (req, res) => {
+  const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+  const { first_name, last_name, role } = req.body as {
+    first_name?: string;
+    last_name?: string;
+    role?: 'admin' | 'user';
+  };
+
+  if (!ObjectId.isValid(id)) {
+    res.status(400).json({ message: 'ID utilisateur invalide' });
+    return;
+  }
+
+  if (!first_name?.trim() || !last_name?.trim() || (role !== 'admin' && role !== 'user')) {
+    res.status(400).json({ message: 'first_name, last_name et role sont requis' });
+    return;
+  }
+
+  try {
+    const db = await getDb();
+    const result = await db.collection<DbUser>('users').findOneAndUpdate(
+      { _id: new ObjectId(id) },
+      {
+        $set: {
+          first_name: first_name.trim(),
+          last_name: last_name.trim(),
+          role
+        }
+      },
+      { returnDocument: 'after' }
+    );
+
+    if (!result) {
+      res.status(404).json({ message: 'Utilisateur introuvable' });
+      return;
+    }
+
+    res.json(mapUser(result));
   } catch (error) {
     res.status(500).json({ message: 'Erreur serveur', error: (error as Error).message });
   }

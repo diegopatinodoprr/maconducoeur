@@ -15,8 +15,10 @@ h2 {
 
 .form {
   display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 0.6rem;
   margin: 0.9rem 0 1rem;
+  align-items: end;
 }
 
 label {
@@ -30,9 +32,9 @@ label {
 }
 
 input {
+  width: 100%;
   border: 0;
   background: transparent;
-  width: 100%;
   outline: none;
 }
 
@@ -49,24 +51,6 @@ button {
   width: fit-content;
 }
 
-.table-wrap {
-  overflow-x: auto;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: #fff;
-}
-
-th,
-td {
-  padding: 0.6rem;
-  border-bottom: 1px solid #eef2f8;
-  text-align: left;
-  white-space: nowrap;
-}
-
 .chip {
   background: #edf3fb;
   color: #2b4e73;
@@ -78,4 +62,101 @@ td {
 
 .error {
   color: #b42318;
+}
+
+.cards-list {
+  margin-top: 0.8rem;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.entity-card {
+  border: 1px solid #dce6f2;
+  border-radius: 12px;
+  background: #fff;
+  padding: 0.7rem 0.8rem;
+}
+
+.entity-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.entity-sub {
+  margin: 0.25rem 0 0.4rem;
+  color: #526173;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.clickable:hover {
+  background: #f7faff;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(9, 14, 24, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-card {
+  width: min(760px, 100%);
+  background: #fff;
+  border-radius: 14px;
+  border: 1px solid #dce6f2;
+  box-shadow: 0 18px 50px rgba(13, 32, 56, 0.22);
+  padding: 1rem;
+}
+
+.modal-header {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.modal-card h3 {
+  margin: 0;
+}
+
+.icon-btn {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 10px;
+}
+
+.icon-btn.ghost {
+  background: #eef3fb;
+  color: #334861;
+}
+
+button.secondary {
+  background: #4e6178;
+}
+
+button.danger {
+  background: #9b3030;
+}
+
+.editing-hint {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: #4e6178;
 }

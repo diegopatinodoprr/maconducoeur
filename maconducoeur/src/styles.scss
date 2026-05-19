@@ -33,3 +33,35 @@ body {
   line-height: 1;
   vertical-align: middle;
 }
+
+/* Prevent mobile browsers (notably iOS Safari) from auto-zooming on form focus. */
+@media (max-width: 768px) {
+  input:not([type='checkbox']):not([type='radio']):not([type='file']),
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+/* Generic chevron hint on list rows rendered in tables. */
+.table-wrap table tbody tr td:last-child {
+  position: relative;
+  padding-right: 2rem;
+}
+
+.table-wrap table tbody tr td:last-child::after {
+  content: 'chevron_right';
+  font-family: 'Material Symbols Outlined';
+  font-size: 18px;
+  color: #8ea0b5;
+  position: absolute;
+  right: 0.6rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+/* Opt-out for rows where chevron is not desired. */
+.table-wrap table tbody tr.no-chevron td:last-child::after {
+  content: '';
+}

@@ -13,8 +13,37 @@ h2 {
   gap: 0.4rem;
 }
 
-.section-title {
-  margin: 1.2rem 0 0.5rem;
+.cards-list {
+  margin-top: 0.8rem;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.address-card {
+  border: 1px solid #dce6f2;
+  border-radius: 12px;
+  background: #fff;
+  padding: 0.7rem 0.8rem;
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.card-owner {
+  margin: 0.25rem 0 0;
+  color: #526173;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.clickable:hover {
+  background: #f7faff;
 }
 
 .form {
@@ -44,6 +73,17 @@ select {
   outline: none;
 }
 
+.add-form {
+  margin-top: 0.6rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
 button {
   border: 0;
   border-radius: 10px;
@@ -59,63 +99,22 @@ button {
   cursor: pointer;
 }
 
-.email-preview {
-  margin: 0.5rem 0 0;
-  color: #3d4b5b;
-  font-size: 0.92rem;
+button.secondary {
+  background: #4e6178;
 }
 
-.cards-list {
-  margin-top: 0.8rem;
-  display: grid;
-  gap: 0.55rem;
+button.danger {
+  background: #9b3030;
 }
 
-.entity-card {
-  border: 1px solid #dce6f2;
-  border-radius: 12px;
-  background: #fff;
-  padding: 0.7rem 0.8rem;
+.editing-hint {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: #4e6178;
 }
 
-.entity-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.6rem;
-}
-
-.entity-sub {
-  margin: 0.25rem 0 0.4rem;
-  color: #526173;
-}
-
-.role {
-  background: #edf3fb;
-  color: #245080;
-  border-radius: 999px;
-  padding: 0.2rem 0.55rem;
-  font-size: 0.78rem;
-  font-weight: 600;
-}
-
-.role.admin {
-  background: #e9f7ec;
-  color: #206033;
-}
-
-.clickable {
-  cursor: pointer;
-}
-
-.clickable:hover {
-  background: #f7faff;
-}
-
-.actions {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
+.empty-cell {
+  color: #6c7b8d;
 }
 
 .modal-overlay {
@@ -130,6 +129,7 @@ button {
 }
 
 .modal-card {
+  position: relative;
   width: min(760px, 100%);
   background: #fff;
   border-radius: 14px;
@@ -160,8 +160,4 @@ button {
 .icon-btn.ghost {
   background: #eef3fb;
   color: #334861;
-}
-
-button.secondary {
-  background: #4e6178;
 }

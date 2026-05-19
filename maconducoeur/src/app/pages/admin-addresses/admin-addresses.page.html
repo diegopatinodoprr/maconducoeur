@@ -1,0 +1,81 @@
+<section class="panel">
+  <h2><span class="material-symbols-outlined">home_pin</span>Gestion des Adresses</h2>
+  <p>Edition et suppression de toutes les adresses du systeme.</p>
+
+  <form class="form add-form" (ngSubmit)="addAddress()">
+    <label>
+      <span class="material-symbols-outlined">bookmark</span>
+      <input name="add_label" [(ngModel)]="addLabel" placeholder="Nom adresse" required />
+    </label>
+    <label>
+      <span class="material-symbols-outlined">person</span>
+      <select name="add_user_id" [(ngModel)]="addUserId" required>
+        <option value="" disabled>Choisir un utilisateur</option>
+        @for (u of users(); track u.id) {
+          <option [value]="u.id">{{ u.first_name }} {{ u.last_name }} ({{ u.email }})</option>
+        }
+      </select>
+    </label>
+    <button type="submit">Ajouter adresse</button>
+  </form>
+
+  <div class="cards-list">
+    @for (a of addresses(); track a.id) {
+      <article class="address-card clickable" (click)="startEdit(a)">
+        <div class="card-head">
+          <strong>{{ a.label }}</strong>
+          <span class="material-symbols-outlined">chevron_right</span>
+        </div>
+        <p class="card-owner">Proprietaire: {{ ownerDisplay(a) }}</p>
+      </article>
+    } @empty {
+      <p class="empty-cell">Aucune adresse.</p>
+    }
+  </div>
+
+</section>
+
+@if (editingAddress(); as current) {
+  <div class="modal-overlay" (click)="cancelEdit()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <form class="form" (ngSubmit)="saveEdit()">
+        <div class="modal-header">
+          <h3>Edition</h3>
+          <div class="actions">
+            <button type="button" class="icon-btn ghost" title="Fermer" aria-label="Fermer" (click)="cancelEdit()">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+            <button type="button" class="icon-btn secondary" title="Annuler l'edition" aria-label="Annuler l'edition" (click)="cancelEdit()">
+              <span class="material-symbols-outlined">undo</span>
+            </button>
+            <button type="submit" class="icon-btn" title="Sauvegarder l'edition" aria-label="Sauvegarder l'edition">
+              <span class="material-symbols-outlined">check</span>
+            </button>
+            <button type="button" class="icon-btn danger" title="Supprimer l'adresse" aria-label="Supprimer l'adresse" (click)="deleteAddress()">
+              <span class="material-symbols-outlined">delete</span>
+            </button>
+          </div>
+        </div>
+
+        <label>
+          <span class="material-symbols-outlined">bookmark</span>
+          <input name="edit_label" [(ngModel)]="editLabel" placeholder="Nom adresse" required />
+        </label>
+        <label>
+          <span class="material-symbols-outlined">home</span>
+          <input name="edit_rue" [(ngModel)]="editRue" placeholder="Rue" required />
+        </label>
+        <label>
+          <span class="material-symbols-outlined">location_city</span>
+          <input name="edit_ville" [(ngModel)]="editVille" placeholder="Ville" required />
+        </label>
+        <label>
+          <span class="material-symbols-outlined">markunread_mailbox</span>
+          <input name="edit_code_postal" [(ngModel)]="editCodePostal" placeholder="Code postal" required />
+        </label>
+
+        <p class="editing-hint">Edition de: <strong>{{ current.label }}</strong></p>
+      </form>
+    </div>
+  </div>
+}
