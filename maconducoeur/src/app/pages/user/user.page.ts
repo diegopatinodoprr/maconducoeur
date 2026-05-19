@@ -14,6 +14,7 @@ interface ToolItem {
   categorie: ToolCategory;
   description: string | null;
   marque: string | null;
+  image_file_id?: string | null;
   image_url: string | null;
   owner_user: { id: string; first_name: string; last_name: string; email: string } | null;
   borrowed_by_user: { id: string; first_name: string; last_name: string; email: string } | null;
@@ -86,11 +87,9 @@ export class UserPage implements OnInit {
     return this.categoryMeta[category]?.label ?? category;
   }
 
-  fullImageUrl(path: string | null): string | null {
-    if (!path) return null;
-    if (path.startsWith('http://') || path.startsWith('https://')) return path;
-    const apiBase = environment.apiUrl.replace(/\/api$/, '');
-    return `${apiBase}${path}`;
+  imageDataUrl(fileId: string | null | undefined): string | null {
+    if (!fileId) return null;
+    return `${environment.apiUrl}/files/${fileId}/data`;
   }
 
   displayUser(user: ToolItem['owner_user']): string {

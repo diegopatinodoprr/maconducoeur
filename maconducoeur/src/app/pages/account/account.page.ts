@@ -12,6 +12,7 @@ interface Profile {
   email: string;
   phone: string | null;
   role: 'admin' | 'user';
+  avatar_file_id: string | null;
   avatar_url: string | null;
 }
 
@@ -123,10 +124,8 @@ export class AccountPage implements OnInit {
       });
   }
 
-  fullImageUrl(url: string | null): string | null {
-    if (!url) return null;
-    if (url.startsWith('http://') || url.startsWith('https://')) return url;
-    const apiBase = environment.apiUrl.replace(/\/api$/, '');
-    return `${apiBase}${url}`;
+  avatarImageUrl(fileId: string | null): string | null {
+    if (!fileId) return null;
+    return `${environment.apiUrl}/files/${fileId}/data`;
   }
 }

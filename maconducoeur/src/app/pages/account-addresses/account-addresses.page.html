@@ -13,7 +13,7 @@
   <div class="addresses">
     @for (a of addresses(); track a.id) {
       <article>
-        @if (fullImageUrl(a.image_url); as addressImg) {
+        @if (imageDataUrl(a.image_file_id); as addressImg) {
           <img [src]="addressImg" alt="Photo adresse" class="address-image" />
         } @else {
           <span class="material-symbols-outlined">home_pin</span>

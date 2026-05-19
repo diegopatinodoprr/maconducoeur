@@ -11,6 +11,7 @@ interface AddressItem {
   rue: string;
   ville: string;
   code_postal: string;
+  image_file_id: string | null;
   image_url: string | null;
 }
 
@@ -122,10 +123,8 @@ export class AccountAddressesPage implements OnInit {
       });
   }
 
-  fullImageUrl(url: string | null): string | null {
-    if (!url) return null;
-    if (url.startsWith('http://') || url.startsWith('https://')) return url;
-    const apiBase = environment.apiUrl.replace(/\/api$/, '');
-    return `${apiBase}${url}`;
+  imageDataUrl(fileId: string | null): string | null {
+    if (!fileId) return null;
+    return `${environment.apiUrl}/files/${fileId}/data`;
   }
 }

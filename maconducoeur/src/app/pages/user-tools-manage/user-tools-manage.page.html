@@ -65,7 +65,7 @@
   <div class="cards">
     @for (tool of tools(); track tool.id) {
       <article>
-        @if (fullImageUrl(tool.image_url); as imageUrl) {
+        @if (imageDataUrl(tool.image_file_id); as imageUrl) {
           <img [src]="imageUrl" [alt]="tool.nom" class="tool-image" />
         } @else {
           <span class="material-symbols-outlined">construction</span>

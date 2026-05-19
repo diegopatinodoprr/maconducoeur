@@ -100,4 +100,42 @@ router.get('/files', requireAuth, async (_req, res) => {
   }
 });
 
+router.get('/files/:id/data', async (req, res) => {
+  const { id } = req.params;
+  if (!id || !ObjectId.isValid(id)) {
+    res.status(400).json({ message: 'id invalide' });
+    return;
+  }
+
+  try {
+    const db = await getDb();
+    const file = await db.collection('files').findOne({ _id: new ObjectId(id) });
+
+    if (!file?.filename) {
+      res.status(404).json({ message: 'Fichier introuvable' });
+      return;
+    }
+
+    const safeFilename = path.basename(file.filename);
+    const absolutePath = path.resolve(uploadsDir, safeFilename);
+
+    // Prevent path traversal if stored filename is tampered.
+    if (!absolutePath.startsWith(uploadsDir + path.sep)) {
+      res.status(400).json({ message: 'Chemin fichier invalide' });
+      return;
+    }
+
+    if (!fs.existsSync(absolutePath)) {
+      res.status(404).json({ message: 'Fichier introuvable sur le disque' });
+      return;
+    }
+
+    res.setHeader('Content-Type', file.mime_type || 'application/octet-stream');
+    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    res.sendFile(absolutePath);
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur serveur', error: (error as Error).message });
+  }
+});
+
 export default router;

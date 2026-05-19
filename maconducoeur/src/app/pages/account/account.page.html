@@ -4,7 +4,7 @@
 
   @if (profile(); as p) {
     <div class="profile-card">
-      @if (fullImageUrl(p.avatar_url); as avatar) {
+      @if (avatarImageUrl(p.avatar_file_id); as avatar) {
         <img [src]="avatar" alt="Avatar utilisateur" class="avatar" />
       } @else {
         <div class="avatar fallback">

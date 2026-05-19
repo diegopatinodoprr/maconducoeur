@@ -26,6 +26,7 @@ interface ToolItem {
   } | null;
   marque_id: string | null;
   marque: string | null;
+  image_file_id?: string | null;
   image_url: string | null;
   etat: ToolState;
   disponible: boolean;
@@ -212,10 +213,8 @@ export class UserToolsManagePage implements OnInit {
       });
   }
 
-  fullImageUrl(url: string | null): string | null {
-    if (!url) return null;
-    if (url.startsWith('http://') || url.startsWith('https://')) return url;
-    const apiBase = environment.apiUrl.replace(/\/api$/, '');
-    return `${apiBase}${url}`;
+  imageDataUrl(fileId: string | null | undefined): string | null {
+    if (!fileId) return null;
+    return `${environment.apiUrl}/files/${fileId}/data`;
   }
 }

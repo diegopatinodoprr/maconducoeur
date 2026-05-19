@@ -41,6 +41,7 @@ API:
 - `DELETE http://localhost:3000/api/utils/manufacturers/:id` (admin)
 - `POST http://localhost:3000/api/files` (auth, form-data field: `file`)
 - `GET http://localhost:3000/api/files` (auth)
+- `GET http://localhost:3000/api/files/:id/data` (public binaire file/image)
 - `POST http://localhost:3000/api/admin/seedprod` (admin)
 - `POST http://localhost:3000/api/borrowings` (auth)
 - `GET http://localhost:3000/api/borrowings` (auth)
@@ -92,7 +93,9 @@ Web:
 
 ## Notes API files
 
-- Les images upload sont servies via `GET /uploads/<filename>`.
+- Regle projet: pour afficher une image ou telecharger un fichier depuis le frontend, toujours utiliser `GET /api/files/:id/data`.
+- Ne pas utiliser `/uploads/<filename>` dans le frontend (detail d'implementation backend/proxy).
+- Les references stockees/echangees doivent etre des ids (`avatar_file_id`, `image_file_id`, etc.).
 - Formats acceptes: `jpeg`, `png`, `webp`.
 - Taille max a l'entree: `30MB` (puis optimisation serveur).
 - Le backend optimise automatiquement les images (redimensionnement + conversion WebP).

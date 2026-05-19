@@ -9,11 +9,11 @@ type ProdUserSeed = {
 };
 
 const PROD_USERS: ProdUserSeed[] = [
-  { first_name: 'Amadou', last_name: 'Sambe', email: 'amadou.sambe@maconducoeur.local' },
-  { first_name: 'Ronald', last_name: 'Rendon', email: 'ronald.rendon@maconducoeur.local' },
-  { first_name: 'Kevin', last_name: 'Firaguay', email: 'kevin.firaguay@maconducoeur.local' },
-  { first_name: 'Moheb', last_name: 'Jerbi', email: 'moheb.jerbi@maconducoeur.local' },
-  { first_name: 'Diego', last_name: 'Patino', email: 'diego.patino@maconducoeur.local' }
+  { first_name: 'Amadou', last_name: 'Sambe', email: 'amadou.sambe@maconducoeur' },
+  { first_name: 'Ronald', last_name: 'Rendon', email: 'ronald.rendon@maconducoeur' },
+  { first_name: 'Kevin', last_name: 'Firaguay', email: 'kevin.firaguay@maconducoeur' },
+  { first_name: 'Moheb', last_name: 'Jerbi', email: 'moheb.jerbi@maconducoeur' },
+  { first_name: 'Diego', last_name: 'Patino', email: 'diego.patino@maconducoeur' }
 ];
 
 export async function seedUsersProd(db: Db): Promise<void> {
