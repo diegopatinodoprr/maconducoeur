@@ -12,6 +12,7 @@ interface Profile {
   email: string;
   phone: string | null;
   role: 'admin' | 'user';
+  credits: number;
   avatar_file_id: string | null;
   avatar_url: string | null;
 }

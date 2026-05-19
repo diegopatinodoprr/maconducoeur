@@ -16,6 +16,7 @@
             <th>Objet</th>
             <th>Chez qui il est</th>
             <th>Depuis quand</th>
+            <th><span class="material-symbols-outlined">sports_bar</span></th>
             <th>Action</th>
           </tr>
         </thead>
@@ -25,6 +26,7 @@
               <td>{{ toolName(b.tool_id) }}</td>
               <td>{{ userName(b.borrower_user_id) }}</td>
               <td>{{ b.start_date | date: 'shortDate' }}</td>
+              <td>{{ b.mousse_cost }}</td>
               <td>
                 @if (b.status === 'active') {
                   <button type="button" (click)="finishBorrowing(b.id)">Marquer retourne</button>
@@ -35,7 +37,7 @@
             </tr>
           } @empty {
             <tr>
-              <td colspan="4" class="empty-cell">Aucun objet prete pour le moment.</td>
+              <td colspan="5" class="empty-cell">Aucun objet prete pour le moment.</td>
             </tr>
           }
         </tbody>
@@ -51,6 +53,7 @@
             <th>Objet demande</th>
             <th>Qui le demande</th>
             <th>Pour quelle date</th>
+            <th><span class="material-symbols-outlined">sports_bar</span></th>
             <th>Action</th>
           </tr>
         </thead>
@@ -60,6 +63,7 @@
               <td>{{ toolName(b.tool_id) }}</td>
               <td>{{ userName(b.borrower_user_id) }}</td>
               <td>{{ b.start_date | date: 'shortDate' }} -> {{ b.end_date | date: 'shortDate' }}</td>
+              <td>{{ b.mousse_cost }}</td>
               <td>
                 <button type="button" (click)="activateBorrowing(b.id)">Valider</button>
                 <button type="button" class="danger" (click)="rejectBorrowing(b.id)">Refuser</button>
@@ -67,7 +71,7 @@
             </tr>
           } @empty {
             <tr>
-              <td colspan="4" class="empty-cell">Aucune demande en attente.</td>
+              <td colspan="5" class="empty-cell">Aucune demande en attente.</td>
             </tr>
           }
         </tbody>
@@ -83,6 +87,7 @@
           <th>Objet</th>
           <th>A qui il appartient</th>
           <th>Depuis quand</th>
+          <th><span class="material-symbols-outlined">sports_bar</span></th>
         </tr>
       </thead>
       <tbody>
@@ -91,10 +96,11 @@
             <td>{{ toolName(b.tool_id) }}</td>
             <td>{{ userName(b.owner_user_id) }}</td>
             <td>{{ b.start_date | date: 'shortDate' }}</td>
+            <td>{{ b.mousse_cost }}</td>
           </tr>
         } @empty {
           <tr>
-            <td colspan="3" class="empty-cell">Vous n'avez aucun objet emprunte.</td>
+            <td colspan="4" class="empty-cell">Vous n'avez aucun objet emprunte.</td>
           </tr>
         }
       </tbody>

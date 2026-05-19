@@ -183,6 +183,16 @@ export class UserToolsManagePage implements OnInit {
       });
   }
 
+  deleteTool(tool: ToolItem): void {
+    this.http.delete(`${environment.apiUrl}/utils/${tool.id}`, { headers: this.authHeaders() }).subscribe({
+      next: () => {
+        this.toast.success('Outil supprime (-5 mousses)');
+        this.loadData();
+      },
+      error: () => this.toast.error('Impossible de supprimer cet outil')
+    });
+  }
+
   onToolPhotoSelected(toolId: string, event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];

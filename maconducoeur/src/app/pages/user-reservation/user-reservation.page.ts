@@ -25,6 +25,7 @@ export class UserReservationPage implements OnInit {
 
   startDate = '';
   endDate = '';
+  estimatedMousses = signal<number>(1);
 
   constructor(
     private readonly http: HttpClient,
@@ -67,6 +68,7 @@ export class UserReservationPage implements OnInit {
       this.toast.error('Date de debut et de fin obligatoires');
       return;
     }
+    this.estimatedMousses.set(this.computeMousses(this.startDate, this.endDate));
 
     this.http
       .post(
@@ -80,10 +82,24 @@ export class UserReservationPage implements OnInit {
       )
       .subscribe({
         next: () => {
-          this.toast.success('Demande d\'emprunt envoyee (en attente de validation)');
+          this.toast.success(`Demande envoyee: ${this.estimatedMousses()} mousse(s) reservee(s)`);
           this.router.navigateByUrl('/utilisateur/utils/mes-emprunts');
         },
         error: () => this.toast.error('Impossible d\'envoyer la demande d\'emprunt')
       });
+  }
+
+  updateEstimate(): void {
+    if (!this.startDate || !this.endDate) return;
+    this.estimatedMousses.set(this.computeMousses(this.startDate, this.endDate));
+  }
+
+  private computeMousses(startDate: string, endDate: string): number {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const durationMs = end.getTime() - start.getTime();
+    if (Number.isNaN(durationMs) || durationMs <= 0) return 1;
+    const days = Math.max(1, Math.ceil(durationMs / (24 * 60 * 60 * 1000)));
+    return Math.max(1, Math.ceil(days / 7));
   }
 }

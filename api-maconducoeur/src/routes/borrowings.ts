@@ -4,16 +4,31 @@ import { getDb } from '../db/pool.js';
 import { AuthenticatedRequest, requireAuth } from '../middlewares/auth.js';
 import { emitAppEvent } from '../realtime/events.js';
 import { BorrowingDocument, BorrowingStatus } from '../types/borrowing.js';
+import { MousseLedgerDocument } from '../types/mousse-ledger.js';
 import { ToolDocument } from '../types/tool.js';
 
 const router = Router();
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+type DbUser = {
+  _id: ObjectId;
+  credits?: number;
+};
+
+function computeMousseCost(start: Date, end: Date): number {
+  const durationMs = end.getTime() - start.getTime();
+  const days = Math.max(1, Math.ceil(durationMs / MS_PER_DAY));
+  return Math.max(1, Math.ceil(days / 7));
+}
 
 function mapBorrowing(row: BorrowingDocument) {
+  const mousseCost = row.mousse_cost ?? computeMousseCost(new Date(row.start_date), new Date(row.end_date));
   return {
     id: row._id.toHexString(),
     tool_id: row.tool_id.toHexString(),
     start_date: row.start_date,
     end_date: row.end_date,
+    mousse_cost: mousseCost,
     borrower_user_id: row.borrower_user_id.toHexString(),
     owner_user_id: row.owner_user_id.toHexString(),
     status: row.status,
@@ -72,6 +87,22 @@ router.post('/borrowings', requireAuth, async (req, res) => {
       return;
     }
 
+    const mousseCost = computeMousseCost(start, end);
+    const borrower = await db.collection<DbUser>('users').findOne({ _id: borrowerId }, { projection: { credits: 1 } });
+    if (!borrower) {
+      res.status(404).json({ message: 'Emprunteur introuvable' });
+      return;
+    }
+    const borrowerCredits = borrower.credits ?? 0;
+    if (borrowerCredits < mousseCost) {
+      res.status(409).json({
+        message: 'Credits insuffisants pour cette demande',
+        required_credits: mousseCost,
+        current_credits: borrowerCredits
+      });
+      return;
+    }
+
     const hasPending = await db.collection<BorrowingDocument>('borrowings').findOne({
       tool_id: tool._id,
       borrower_user_id: borrowerId,
@@ -88,6 +119,7 @@ router.post('/borrowings', requireAuth, async (req, res) => {
       tool_id: tool._id,
       start_date: start,
       end_date: end,
+      mousse_cost: mousseCost,
       borrower_user_id: borrowerId,
       owner_user_id: tool.owner_user_id,
       status: 'pending',
@@ -97,6 +129,20 @@ router.post('/borrowings', requireAuth, async (req, res) => {
 
     const result = await db.collection<Omit<BorrowingDocument, '_id'>>('borrowings').insertOne(doc);
     const created: BorrowingDocument = { _id: result.insertedId, ...doc };
+    await db.collection<DbUser>('users').updateOne(
+      { _id: borrowerId },
+      { $inc: { credits: -mousseCost } }
+    );
+    await db.collection<Omit<MousseLedgerDocument, '_id'>>('mousse_ledger').insertOne({
+      borrowing_id: created._id,
+      tool_id: created.tool_id,
+      from_user_id: created.borrower_user_id,
+      to_user_id: created.owner_user_id,
+      mousse_amount: mousseCost,
+      status: 'pending',
+      created_at: now,
+      updated_at: now
+    });
 
     emitAppEvent({
       type: 'borrowing.requested',
@@ -105,7 +151,8 @@ router.post('/borrowings', requireAuth, async (req, res) => {
       payload: {
         tool_id: created.tool_id.toHexString(),
         owner_user_id: created.owner_user_id.toHexString(),
-        borrower_user_id: created.borrower_user_id.toHexString()
+        borrower_user_id: created.borrower_user_id.toHexString(),
+        mousse_cost: mousseCost
       }
     });
 
@@ -201,6 +248,7 @@ router.put('/borrowings/:id/status', requireAuth, async (req, res) => {
     }
 
     if (status === 'active') {
+      const mousseCost = borrowing.mousse_cost ?? computeMousseCost(new Date(borrowing.start_date), new Date(borrowing.end_date));
       await db.collection<ToolDocument>('utils').updateOne(
         { _id: borrowing.tool_id, owner_user_id: borrowing.owner_user_id },
         {
@@ -210,6 +258,14 @@ router.put('/borrowings/:id/status', requireAuth, async (req, res) => {
             updated_at: now
           }
         }
+      );
+      await db.collection<DbUser>('users').updateOne(
+        { _id: borrowing.owner_user_id },
+        { $inc: { credits: mousseCost } }
+      );
+      await db.collection<MousseLedgerDocument>('mousse_ledger').updateOne(
+        { borrowing_id: borrowing._id },
+        { $set: { status: 'settled', settled_at: now, updated_at: now } }
       );
     }
 
@@ -228,6 +284,18 @@ router.put('/borrowings/:id/status', requireAuth, async (req, res) => {
       );
     }
 
+    if (status === 'rejected') {
+      const mousseCost = borrowing.mousse_cost ?? computeMousseCost(new Date(borrowing.start_date), new Date(borrowing.end_date));
+      await db.collection<DbUser>('users').updateOne(
+        { _id: borrowing.borrower_user_id },
+        { $inc: { credits: mousseCost } }
+      );
+      await db.collection<MousseLedgerDocument>('mousse_ledger').updateOne(
+        { borrowing_id: borrowing._id },
+        { $set: { status: 'canceled', canceled_at: now, updated_at: now } }
+      );
+    }
+
     emitAppEvent({
       type: 'borrowing.status_changed',
       actor_user_id: authReq.auth?.sub ?? null,
@@ -236,7 +304,8 @@ router.put('/borrowings/:id/status', requireAuth, async (req, res) => {
         status,
         tool_id: result.tool_id.toHexString(),
         owner_user_id: result.owner_user_id.toHexString(),
-        borrower_user_id: result.borrower_user_id.toHexString()
+        borrower_user_id: result.borrower_user_id.toHexString(),
+        mousse_cost: result.mousse_cost ?? computeMousseCost(new Date(result.start_date), new Date(result.end_date))
       }
     });
 

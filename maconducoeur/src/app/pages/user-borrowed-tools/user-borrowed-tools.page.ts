@@ -22,6 +22,7 @@ interface BorrowingItem {
   tool_id: string;
   start_date: string;
   end_date: string;
+  mousse_cost: number;
   borrower_user_id: string;
   owner_user_id: string;
   status: BorrowingStatus;

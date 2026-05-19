@@ -23,6 +23,7 @@ type UserDocument = {
   first_name: string;
   last_name: string;
   email: string;
+  credits?: number;
 };
 
 type AddressDocument = {
@@ -248,6 +249,10 @@ router.post('/utils', requireAuth, async (req, res) => {
     };
 
     const result = await db.collection('utils').insertOne(doc);
+    await db.collection<UserDocument>('users').updateOne(
+      { _id: ownerUserId },
+      { $inc: { credits: 10 } }
+    );
     const createdToolId = result.insertedId.toHexString();
     emitAppEvent({
       type: 'tool.created',
@@ -273,6 +278,54 @@ router.post('/utils', requireAuth, async (req, res) => {
         code_postal: address.code_postal
       }
     });
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur serveur', error: (error as Error).message });
+  }
+});
+
+router.delete('/utils/:id', requireAuth, async (req, res) => {
+  const authReq = req as AuthenticatedRequest;
+  const toolId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+
+  if (!ObjectId.isValid(toolId)) {
+    res.status(400).json({ message: 'ID outil invalide' });
+    return;
+  }
+
+  try {
+    const db = await getDb();
+    const existing = await db.collection<ToolDocument>('utils').findOne({ _id: new ObjectId(toolId) });
+    if (!existing) {
+      res.status(404).json({ message: 'Outil introuvable' });
+      return;
+    }
+
+    const isOwner = existing.owner_user_id.toHexString() === authReq.auth?.sub;
+    const isAdmin = authReq.auth?.role === 'admin';
+    if (!isOwner && !isAdmin) {
+      res.status(403).json({ message: 'Acces refuse: seul le proprietaire peut supprimer cet outil' });
+      return;
+    }
+
+    if (existing.borrowed_by_user_id) {
+      res.status(409).json({ message: 'Suppression impossible: outil actuellement emprunte' });
+      return;
+    }
+
+    await db.collection('utils').deleteOne({ _id: existing._id });
+    await db.collection<UserDocument>('users').updateOne(
+      { _id: existing.owner_user_id },
+      { $inc: { credits: -5 } }
+    );
+
+    emitAppEvent({
+      type: 'tool.updated',
+      actor_user_id: authReq.auth?.sub ?? null,
+      entity_id: existing._id.toHexString(),
+      payload: { scope: 'tool.deleted' }
+    });
+
+    res.status(204).send();
   } catch (error) {
     res.status(500).json({ message: 'Erreur serveur', error: (error as Error).message });
   }

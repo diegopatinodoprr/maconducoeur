@@ -33,6 +33,7 @@ export async function seedUsersProd(db: Db): Promise<void> {
           email: user.email,
           password_hash: passwordHash,
           role: 'user',
+          credits: 0,
           updated_at: now
         },
         $setOnInsert: { created_at: now }

@@ -1,0 +1,75 @@
+<section class="panel">
+  <h2><span class="material-symbols-outlined">sports_bar</span>Mes Credits</h2>
+  <p>Credits disponibles, dettes en attente et credits a recevoir.</p>
+
+  @if (data(); as d) {
+    <div class="stats">
+      <article>
+        <small>Mon solde</small>
+        <strong>{{ d.credits }} <span class="material-symbols-outlined">sports_bar</span></strong>
+      </article>
+      <article>
+        <small>Je dois</small>
+        <strong>{{ d.totals.i_owe }} <span class="material-symbols-outlined">sports_bar</span></strong>
+      </article>
+      <article>
+        <small>On me doit</small>
+        <strong>{{ d.totals.owed_to_me }} <span class="material-symbols-outlined">sports_bar</span></strong>
+      </article>
+    </div>
+
+    <div class="tables">
+      <div class="table-wrap">
+        <h3>Je dois (demandes en attente)</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>A qui</th>
+              <th><span class="material-symbols-outlined">sports_bar</span></th>
+              <th>Depuis</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of d.i_owe; track row.borrowing_id) {
+              <tr>
+                <td>{{ row.to_user_name }}</td>
+                <td>{{ row.mousse_amount }}</td>
+                <td>{{ row.created_at | date: 'shortDate' }}</td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="3" class="empty-cell">Aucune dette en attente.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="table-wrap">
+        <h3>On me doit (demandes a valider)</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Qui</th>
+              <th><span class="material-symbols-outlined">sports_bar</span></th>
+              <th>Depuis</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of d.owed_to_me; track row.borrowing_id) {
+              <tr>
+                <td>{{ row.from_user_name }}</td>
+                <td>{{ row.mousse_amount }}</td>
+                <td>{{ row.created_at | date: 'shortDate' }}</td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="3" class="empty-cell">Aucun credit a recevoir en attente.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</section>

@@ -1,0 +1,76 @@
+.panel {
+  background: #fff;
+  border: 1px solid #e7edf7;
+  border-radius: 14px;
+  padding: 1rem;
+}
+
+h2 {
+  margin: 0 0 0.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.stats {
+  margin-top: 0.8rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.stats article {
+  border: 1px solid #dde5f2;
+  border-radius: 10px;
+  background: #f8fafd;
+  padding: 0.7rem;
+  display: grid;
+  gap: 0.2rem;
+}
+
+.stats small {
+  color: #5d7085;
+}
+
+.tables {
+  margin-top: 0.9rem;
+  display: grid;
+  gap: 0.7rem;
+}
+
+.table-wrap {
+  border: 1px solid #e7edf7;
+  border-radius: 12px;
+  overflow: auto;
+  background: #fff;
+}
+
+.table-wrap h3 {
+  margin: 0;
+  padding: 0.7rem;
+  border-bottom: 1px solid #e7edf7;
+  font-size: 0.95rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  border-bottom: 1px solid #eef3fb;
+  padding: 0.65rem;
+  text-align: left;
+}
+
+.empty-cell {
+  text-align: center;
+  color: #66788a;
+}
+
+@media (max-width: 720px) {
+  .stats {
+    grid-template-columns: 1fr;
+  }
+}

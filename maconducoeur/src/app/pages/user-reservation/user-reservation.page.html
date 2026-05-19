@@ -12,12 +12,13 @@
       <form class="form" (ngSubmit)="submitReservation()">
         <label>
           Date de debut
-          <input type="date" name="startDate" [(ngModel)]="startDate" required />
+          <input type="date" name="startDate" [(ngModel)]="startDate" (ngModelChange)="updateEstimate()" required />
         </label>
         <label>
           Date de fin
-          <input type="date" name="endDate" [(ngModel)]="endDate" required />
+          <input type="date" name="endDate" [(ngModel)]="endDate" (ngModelChange)="updateEstimate()" required />
         </label>
+        <p><strong>Cout estime:</strong> {{ estimatedMousses() }} <span class="material-symbols-outlined">sports_bar</span></p>
         <div class="actions">
           <button type="submit">Envoyer la demande</button>
           <a class="link-btn" routerLink="/utilisateur/utils/catalogue">Annuler</a>

@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { adminGuard } from './guards/admin.guard';
 import { authGuard } from './guards/auth.guard';
 import { AccountAddressesPage } from './pages/account-addresses/account-addresses.page';
+import { AccountMoussesPage } from './pages/account-mousses/account-mousses.page';
 import { AccountSecurityPage } from './pages/account-security/account-security.page';
 import { AccountPage } from './pages/account/account.page';
 import { AdminManufacturersPage } from './pages/admin-manufacturers/admin-manufacturers.page';
@@ -17,6 +18,7 @@ import { UserPage } from './pages/user/user.page';
 export const routes: Routes = [
   { path: '', component: LoginPage },
   { path: 'compte', component: AccountPage, canActivate: [authGuard] },
+  { path: 'compte/mousses', component: AccountMoussesPage, canActivate: [authGuard] },
   { path: 'compte/adresses', component: AccountAddressesPage, canActivate: [authGuard] },
   { path: 'compte/securite', component: AccountSecurityPage, canActivate: [authGuard] },
   { path: 'utilisateur', redirectTo: 'utilisateur/utils/mes-outils', pathMatch: 'full' },

@@ -18,6 +18,7 @@ export async function seedUsers(db: Db): Promise<void> {
         email: 'admin@maconducoeur.local',
         password_hash: adminHash,
         role: 'admin',
+        credits: 0,
         created_at: new Date()
       }
     },
@@ -33,6 +34,7 @@ export async function seedUsers(db: Db): Promise<void> {
         email: 'user@maconducoeur.local',
         password_hash: userHash,
         role: 'user',
+        credits: 0,
         created_at: new Date()
       }
     },

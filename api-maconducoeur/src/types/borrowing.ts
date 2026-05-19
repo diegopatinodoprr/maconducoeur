@@ -7,6 +7,7 @@ export type BorrowingDocument = {
   tool_id: ObjectId;
   start_date: Date;
   end_date: Date;
+  mousse_cost: number;
   borrower_user_id: ObjectId;
   owner_user_id: ObjectId;
   status: BorrowingStatus;

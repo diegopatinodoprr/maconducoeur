@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { ObjectId } from 'mongodb';
 import { getDb } from '../db/pool.js';
 import { AuthenticatedRequest, requireAuth } from '../middlewares/auth.js';
+import { MousseLedgerDocument } from '../types/mousse-ledger.js';
 
 const router = Router();
 
@@ -12,6 +13,7 @@ type DbUser = {
   email: string;
   phone?: string;
   role: 'admin' | 'user';
+  credits?: number;
   avatar_file_id?: ObjectId;
   created_at?: Date;
 };
@@ -36,6 +38,7 @@ function mapUser(u: DbUser & { avatar_file?: { _id: ObjectId; url: string }[] })
     email: u.email,
     phone: u.phone ?? null,
     role: u.role,
+    credits: u.credits ?? 0,
     avatar_file_id: u.avatar_file_id?.toHexString?.() ?? null,
     avatar_url: u.avatar_file?.[0]?.url ?? null,
     created_at: u.created_at ?? null
@@ -87,7 +90,7 @@ router.get('/users', async (_req, res) => {
     const rows = await db
       .collection<DbUser>('users')
       .aggregate<DbUser & { avatar_file?: { _id: ObjectId; url: string }[] }>([
-        { $project: { first_name: 1, last_name: 1, email: 1, phone: 1, role: 1, created_at: 1, avatar_file_id: 1 } },
+        { $project: { first_name: 1, last_name: 1, email: 1, phone: 1, role: 1, credits: 1, created_at: 1, avatar_file_id: 1 } },
         {
           $lookup: {
             from: 'files',
@@ -114,7 +117,7 @@ router.get('/users/me', requireAuth, async (req, res) => {
       .collection<DbUser>('users')
       .aggregate<DbUser & { avatar_file?: { _id: ObjectId; url: string }[] }>([
         { $match: { _id: new ObjectId(authReq.auth?.sub) } },
-        { $project: { first_name: 1, last_name: 1, email: 1, phone: 1, role: 1, created_at: 1, avatar_file_id: 1 } },
+        { $project: { first_name: 1, last_name: 1, email: 1, phone: 1, role: 1, credits: 1, created_at: 1, avatar_file_id: 1 } },
         {
           $lookup: {
             from: 'files',
@@ -133,6 +136,80 @@ router.get('/users/me', requireAuth, async (req, res) => {
     }
 
     res.json(mapUser(user));
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur serveur', error: (error as Error).message });
+  }
+});
+
+router.get('/users/me/mousses', requireAuth, async (req, res) => {
+  const authReq = req as AuthenticatedRequest;
+  const currentUserId = new ObjectId(authReq.auth?.sub);
+
+  try {
+    const db = await getDb();
+    const currentUser = await db.collection<DbUser>('users').findOne(
+      { _id: currentUserId },
+      { projection: { credits: 1 } }
+    );
+    const ledgerRows = await db
+      .collection<MousseLedgerDocument>('mousse_ledger')
+      .find({
+        status: 'pending',
+        $or: [{ from_user_id: currentUserId }, { to_user_id: currentUserId }]
+      })
+      .sort({ created_at: -1 })
+      .toArray();
+
+    const peerIds = Array.from(
+      new Set(
+        ledgerRows
+          .flatMap((row) => [row.from_user_id.toHexString(), row.to_user_id.toHexString()])
+          .filter((id) => id !== currentUserId.toHexString())
+      )
+    ).map((id) => new ObjectId(id));
+
+    const peers = peerIds.length
+      ? await db
+          .collection<DbUser>('users')
+          .find({ _id: { $in: peerIds } }, { projection: { first_name: 1, last_name: 1 } })
+          .toArray()
+      : [];
+    const peersMap = new Map(peers.map((p) => [p._id.toHexString(), `${p.first_name} ${p.last_name}`]));
+
+    const iOwe = ledgerRows
+      .filter((row) => row.from_user_id.toHexString() === currentUserId.toHexString())
+      .map((row) => ({
+        borrowing_id: row.borrowing_id.toHexString(),
+        tool_id: row.tool_id.toHexString(),
+        mousse_amount: row.mousse_amount,
+        to_user_id: row.to_user_id.toHexString(),
+        to_user_name: peersMap.get(row.to_user_id.toHexString()) ?? '-',
+        created_at: row.created_at
+      }));
+
+    const owedToMe = ledgerRows
+      .filter((row) => row.to_user_id.toHexString() === currentUserId.toHexString())
+      .map((row) => ({
+        borrowing_id: row.borrowing_id.toHexString(),
+        tool_id: row.tool_id.toHexString(),
+        mousse_amount: row.mousse_amount,
+        from_user_id: row.from_user_id.toHexString(),
+        from_user_name: peersMap.get(row.from_user_id.toHexString()) ?? '-',
+        created_at: row.created_at
+      }));
+
+    const totalIOwe = iOwe.reduce((sum, row) => sum + row.mousse_amount, 0);
+    const totalOwedToMe = owedToMe.reduce((sum, row) => sum + row.mousse_amount, 0);
+
+    res.json({
+      credits: currentUser?.credits ?? 0,
+      totals: {
+        i_owe: totalIOwe,
+        owed_to_me: totalOwedToMe
+      },
+      i_owe: iOwe,
+      owed_to_me: owedToMe
+    });
   } catch (error) {
     res.status(500).json({ message: 'Erreur serveur', error: (error as Error).message });
   }

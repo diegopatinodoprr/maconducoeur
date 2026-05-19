@@ -43,6 +43,8 @@ API:
 - `GET http://localhost:3000/api/files` (auth)
 - `GET http://localhost:3000/api/files/:id/data` (public binaire file/image)
 - `POST http://localhost:3000/api/admin/seedprod` (admin)
+- `GET http://localhost:3000/api/admin/migrations` (admin)
+- `POST http://localhost:3000/api/admin/migrations/run` (admin)
 - `POST http://localhost:3000/api/borrowings` (auth)
 - `GET http://localhost:3000/api/borrowings` (auth)
 - `PUT http://localhost:3000/api/borrowings/:id/status` (owner only)
@@ -107,3 +109,16 @@ Web:
 - Status possibles: `pending`, `active`, `finished`.
 - `PUT /api/borrowings/:id/status` ne peut etre appele que par le proprietaire de l'outil.
 - Transitions autorisees: `pending -> active -> finished`.
+
+## Notes API migrations
+
+- Les migrations doivent passer par le router admin (`/api/admin/migrations/*`).
+- Migration disponible: `users_credits_default_10_v1`
+  - ajoute `credits: 10` uniquement pour les users qui n'ont pas encore le champ `credits` (ou `null`).
+  - n'ecrase jamais les credits deja presents.
+- Migration disponible: `borrowings_backfill_mousse_cost_v1`
+  - calcule et renseigne `mousse_cost` pour les emprunts existants qui ne l'ont pas encore.
+  - n'ecrase jamais un `mousse_cost` deja present.
+- Migration disponible: `borrowings_backfill_pending_ledger_v1`
+  - cree les lignes `mousse_ledger` manquantes pour les emprunts historiques en `pending`.
+  - evite les doublons via `borrowing_id` unique.
