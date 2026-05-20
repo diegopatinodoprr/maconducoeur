@@ -3,22 +3,23 @@
 }
 
 :root {
-  --bg-sand: #ebe4d8;
-  --bg-concrete: #d9d4c9;
-  --surface: #f7f3eb;
-  --surface-2: #fffdf8;
-  --text-main: #2b2a27;
-  --text-soft: #605a52;
-  --accent-wood: #8f5f3a;
-  --accent-clay: #c06f3b;
-  --accent-olive: #4a5a3d;
-  --line-muted: #d6ccbc;
+  --bg-sand: #e6eaec;
+  --bg-concrete: #cfd7dc;
+  --surface: #eef2f4;
+  --surface-2: #f8fafb;
+  --text-main: #1f262a;
+  --text-soft: #4f5a61;
+  --accent-wood: #50626d;
+  --accent-clay: #7a919e;
+  --accent-olive: #3f4f58;
+  --line-muted: #c6d0d6;
 }
 
 html,
 body {
   margin: 0;
   min-height: 100%;
+  font-size: 15px;
   font-family: 'Poppins', 'Segoe UI', sans-serif;
   background: linear-gradient(180deg, var(--bg-sand) 0%, var(--bg-concrete) 100%);
   color: var(--text-main);

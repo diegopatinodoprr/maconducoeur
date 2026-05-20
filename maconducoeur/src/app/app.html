@@ -17,7 +17,7 @@
     </div>
   </header>
 
-  <div class="workspace" [class.with-sidenav]="auth.isAuthenticated()" [class.menu-open]="sidenavOpen">
+  <div class="workspace" [class.with-sidenav]="auth.isAuthenticated()" [class.menu-open]="sidenavOpen" [class.login-workspace]="isLoginRoute()">
     @if (auth.isAuthenticated()) {
       <button class="sidenav-backdrop" [class.open]="sidenavOpen" type="button" aria-label="Fermer le menu" (click)="closeSidenav()"></button>
       <aside class="sidenav" [class.open]="sidenavOpen">
@@ -92,7 +92,7 @@
       </aside>
     }
 
-    <main class="content">
+    <main class="content" [class.login-content]="isLoginRoute()">
       <router-outlet></router-outlet>
     </main>
   </div>

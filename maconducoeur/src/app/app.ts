@@ -17,6 +17,10 @@ export class App {
     private readonly router: Router
   ) {}
 
+  protected isLoginRoute(): boolean {
+    return this.router.url === '/';
+  }
+
   toggleSidenav(): void {
     this.sidenavOpen = !this.sidenavOpen;
   }

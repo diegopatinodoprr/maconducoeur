@@ -4,9 +4,9 @@
   display: block;
   min-height: 100dvh;
   background:
-    linear-gradient(rgba(28, 24, 18, 0.35), rgba(28, 24, 18, 0.45)),
-    url('/assets/bkg-optimized.jpg') center / cover no-repeat fixed;
-  color: #2b2a27;
+    linear-gradient(rgba(19, 27, 32, 0.4), rgba(19, 27, 32, 0.5)),
+    url('/assets/bkg-2.jpg') center / cover no-repeat fixed;
+  color: #1f262a;
 }
 
 .layout {
@@ -23,9 +23,9 @@
   z-index: 30;
   height: var(--header-h);
   padding: 0.45rem 0.75rem;
-  background: linear-gradient(90deg, #3f2f22 0%, #6c4a2f 55%, #8d6038 100%);
-  color: #f6eee0;
-  border-bottom: 1px solid rgba(255, 236, 207, 0.25);
+  background: linear-gradient(90deg, #2c3c47 0%, #435966 55%, #5f7a8a 100%);
+  color: #f1f6f8;
+  border-bottom: 1px solid rgba(220, 236, 245, 0.25);
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -62,8 +62,8 @@
     border-radius: 10px;
     padding: 0.5rem 0.75rem;
     font-weight: 600;
-    color: #4a311f;
-    background: #f1dcc2;
+    color: #2f404a;
+    background: #dce8ee;
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
@@ -91,14 +91,18 @@
   box-sizing: border-box;
 }
 
+.workspace.login-workspace {
+  padding-bottom: 0;
+}
+
 .workspace.with-sidenav {
   display: grid;
   grid-template-rows: auto 1fr;
 }
 
 .sidenav {
-  background: linear-gradient(180deg, #f9f3e8 0%, #efe6d7 100%);
-  border-bottom: 1px solid #dccdb9;
+  background: linear-gradient(180deg, #eff4f6 0%, #e3eaee 100%);
+  border-bottom: 1px solid #c7d2d9;
   padding: 0.75rem;
   display: flex;
   flex-direction: column;
@@ -146,17 +150,17 @@
 
 .nav-group {
   min-width: 210px;
-  border: 1px solid #decfb9;
+  border: 1px solid #cbd6dc;
   border-radius: 12px;
   padding: 0.6rem;
-  background: #fffaf1;
+  background: #f8fbfc;
 
   h3 {
     margin: 0 0 0.45rem;
     font-size: 0.78rem;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    color: #6d6457;
+    color: #5d6971;
   }
 
   a {
@@ -164,7 +168,7 @@
     align-items: center;
     gap: 0.45rem;
     text-decoration: none;
-    color: #4f473d;
+    color: #3b4850;
     border-radius: 8px;
     padding: 0.5rem 0.55rem;
     font-size: 0.86rem;
@@ -177,8 +181,8 @@
   }
 
   a.active {
-    background: #ead2b3;
-    color: #5a3a24;
+    background: #d7e6ee;
+    color: #2f404a;
   }
 
   .material-symbols-outlined {
@@ -190,7 +194,12 @@
   padding: 1rem;
   overflow-y: auto;
   background:
-    linear-gradient(180deg, rgba(247, 241, 231, 0.92) 0%, rgba(230, 223, 209, 0.9) 100%);
+    linear-gradient(180deg, rgba(240, 245, 248, 0.9) 0%, rgba(221, 231, 236, 0.88) 100%);
+}
+
+.content.login-content {
+  padding: 0;
+  background: transparent;
 }
 
 .workspace.menu-open .content {
@@ -208,9 +217,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(90deg, #3e2c1d 0%, #5e3f28 100%);
-  color: #f0dfc7;
-  border-top: 1px solid rgba(255, 222, 181, 0.25);
+  background: linear-gradient(90deg, #2a3943 0%, #3f5360 100%);
+  color: #e6f0f4;
+  border-top: 1px solid rgba(209, 226, 236, 0.25);
 }
 
 .logout-nav-btn {
@@ -219,13 +228,54 @@
   border-radius: 10px;
   padding: 0.6rem 0.75rem;
   font-weight: 600;
-  background: #ead7bf;
-  color: #5f3f27;
+  background: #d7e4eb;
+  color: #32444f;
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
   width: 100%;
   justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .topbar {
+    h1 {
+      font-size: 0.92rem;
+    }
+
+    p {
+      font-size: 0.62rem;
+    }
+
+    button {
+      font-size: 0.84rem;
+      padding: 0.42rem 0.62rem;
+    }
+  }
+
+  .nav-group {
+    h3 {
+      font-size: 0.72rem;
+    }
+
+    a {
+      font-size: 0.8rem;
+      padding: 0.42rem 0.5rem;
+    }
+  }
+
+  .content {
+    padding: 0.75rem;
+  }
+
+  .app-footer {
+    font-size: 0.78rem;
+  }
+
+  .logout-nav-btn {
+    font-size: 0.82rem;
+    padding: 0.5rem 0.65rem;
+  }
 }
 
 @media (min-width: 980px) {
@@ -244,13 +294,13 @@
     margin: 0 auto;
     border-left: 1px solid #edf1f5;
     border-right: 1px solid #edf1f5;
-    background: rgba(250, 245, 236, 0.75);
+    background: rgba(241, 247, 249, 0.72);
     backdrop-filter: blur(2px);
     height: 100%;
   }
 
   .sidenav {
-    border-right: 1px solid #ddcdb8;
+    border-right: 1px solid #c7d2d9;
     border-bottom: 0;
     display: flex;
     overflow: visible;
